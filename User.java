@@ -31,6 +31,7 @@ public class User {
      * @param book The book to be borrowed by the user
      */
     public void borrowBook(Book book) {
+        book.setBorrowedDays();
         borrowedBooks.add(book);
     }
 

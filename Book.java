@@ -73,6 +73,15 @@ public abstract class Book{
     public LocalDate getBorrowedDate() {
         return borrowedDate;
     }
+
+    public void setBorrowedDays() {
+        LocalDate now = LocalDate.now();
+        borrowedDate = now;
+    }
+
+    public void subtractBorrowedDays(int days) {
+        borrowedDate.minusDays(days);
+    } 
     
     /** 
      * Returns the ISBN of the book.

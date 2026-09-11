@@ -28,6 +28,7 @@ public class tester{
         library.borrowBooks(jerry, book1);
         library.borrowBooks(jerry, book2);
         System.out.println(jerry.getBorrowedBooks());
-        System.out.println("Working");
+        book1.subtractBorrowedDays(30);
+        System.out.println(jerry.getOverdue());
     }  
 }
