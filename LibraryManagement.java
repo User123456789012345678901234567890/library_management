@@ -1,7 +1,7 @@
 import java.util.*;
 public class LibraryManagement {
-    private HashMap<Long, BookManagement> bookManagers;
-    private HashMap<Integer, User> users;
+    private Map<Long, BookManagement> bookManagers;
+    private Map<Integer, User> users;
     private String libraryName;
     
     /** 
@@ -16,6 +16,16 @@ public class LibraryManagement {
         users = new HashMap<>();
         this.libraryName = libraryName;
     }
+
+    public User getUser(String username){
+        for (User user : users.values()){
+            if (user.getName().equals(username)){
+                return user;
+            }
+        }
+        return null;
+    }
+    
 
     /**
      * Adds a nonuniform list of books to the library's collection.
@@ -43,7 +53,8 @@ public class LibraryManagement {
             // System.out.println("Book added: " + book.getTitle());
         }
     }
-  
+
+    
     /**
      * Returns the User object associated with the given user ID.
      * Precondition: The user ID must be valid and exist in the library's user collection.
@@ -55,12 +66,21 @@ public class LibraryManagement {
     public void returnBooks(User user, Book... books) { 
         for (Book book : books) {
             if (user.hasBook(book)) {
-                user.unborrowBook(book); // Removes the book from the user's array of checked-out books
                 BookManagement bookManager = bookManagers.get(book.getISBN()); 
                 bookManager.returnBook(user, book); // Changes the book in the specific BookManager from borrowed to available
             }
         }
     }
+
+    public void borrowBooks(User user, Book... books) {
+        for (Book book : books) {
+            if (bookManagers.containsKey(book.getISBN())) {
+                BookManagement bookManager = bookManagers.get(book.getISBN());
+                bookManager.checkoutBook(user, book);
+            }
+        }
+    }
+    
     /**
      * Adds a new user to the library's user collection.
      * Precondition: The user must be valid and non-empty.
@@ -99,5 +119,15 @@ public class LibraryManagement {
         user.unborrowBook(book);
         BookManagement bookManagement = bookManagers.get(book.getISBN()); 
         bookManagement.removeBook(book);
+    }
+
+    public long[] getBookISBNs() { 
+        return bookManagers.keySet().stream()
+                .mapToLong(Long::longValue)
+                .toArray(); 
+    }
+
+    public Map getBookInfo(Integer ISBN){
+        return bookManagers.get(ISBN).getBookInfo();
     }
 }

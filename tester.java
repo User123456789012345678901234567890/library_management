@@ -24,15 +24,10 @@ public class tester{
         System.out.println(book1.getInfo());
         System.out.println(book1);
         
-        //Test borrowing books
-        // simon.borrowBook(book1);
-        // simon.borrowBook(book2);
-        // System.out.println("Simon's borrowed books: " + simon.getBorrowedBooks());
-        // library.returnBooks(simon, book1);
-        // System.out.println("Simon's borrowed books after returning book1: " + simon.getBorrowedBooks());
-        // System.out.println("Book1 info after being returned: " + book1.getInfo());
-        // book2.setCondition(Book.Condition.FAIR);
-        
-
-    }
+        // Test borrowing books
+        library.borrowBooks(jerry, book1);
+        library.borrowBooks(jerry, book2);
+        System.out.println(jerry.getBorrowedBooks());
+        System.out.println("Working");
+    }  
 }

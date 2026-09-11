@@ -91,6 +91,7 @@ public class BookManagement {
         if (!borrowed.contains(book)){
             return false;
         }
+        user.unborrowBook(book);
         borrowed.remove(borrowed.indexOf(book));
         available.add(book);
         if (!waitList.isEmpty()) {
