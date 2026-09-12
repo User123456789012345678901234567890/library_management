@@ -209,7 +209,7 @@ public class Library{
                     try{
                         long ISBN = Long.parseLong(input);
                         if (catalog.containsKey(ISBN)){
-                            System.out.println("Book Found!");
+                            System.out.println("Book Found!"); // aim to make this also work with the number of the book in the list, not just typing out the entire ISBN
                             Map<?,?> bookInfo = catalog.get(ISBN).getBookInfo();
                             for (Map.Entry<?, ?> entry : bookInfo.entrySet()) {
                                 System.out.println(entry.getKey() + ": " + entry.getValue());
