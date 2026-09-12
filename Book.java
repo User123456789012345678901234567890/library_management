@@ -74,13 +74,18 @@ public abstract class Book{
         return borrowedDate;
     }
 
-    public void setBorrowedDays() {
+    public void setBorrowedDate() {
         LocalDate now = LocalDate.now();
         borrowedDate = now;
     }
 
+    /**
+     * For debugging purposes. Subtracts a specific amount of days from the date a book was borrowed. 
+     */
     public void subtractBorrowedDays(int days) {
-        borrowedDate.minusDays(days);
+        // System.out.println("Initial date: " + borrowedDate);
+        borrowedDate = borrowedDate.minusDays(days);
+        // System.out.println("Subtracted " + days + " days, new date: " + borrowedDate);
     } 
     
     /** 

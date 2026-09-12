@@ -130,4 +130,8 @@ public class LibraryManagement {
     public Map getBookInfo(Integer ISBN){
         return bookManagers.get(ISBN).getBookInfo();
     }
+
+    public Map<Long, BookManagement> getBookManagers() {
+        return bookManagers;
+    }
 }

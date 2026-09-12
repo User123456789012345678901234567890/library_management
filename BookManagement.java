@@ -4,7 +4,7 @@ public class BookManagement {
     private int bookCount;
     private ArrayList<Book> available;
     private ArrayList<Book> borrowed;
-    private Queue<User> waitList;
+    private Queue<User> waitlist;
     
     /**
      * Manages each title of book in the library.
@@ -16,6 +16,7 @@ public class BookManagement {
         this.isbn = isbn;
         available = new ArrayList<>();
         borrowed = new ArrayList<>();
+        waitlist = new LinkedList<>();
         bookCount = 0;
     }
 
@@ -45,6 +46,14 @@ public class BookManagement {
         }
     }
 
+    public Queue<User> getWaitlist() {
+        return waitlist;
+    }
+
+    public ArrayList<Book> getAvailableBooks() {
+        return available;
+    }
+
     /**
      * Adds books to the available catalog.
      * Precondition: The book must be valid and non-empty.
@@ -65,7 +74,6 @@ public class BookManagement {
      */
     public boolean checkoutBook(User user, Book book) {
         // Store book under User
-        // TODO: Put false condition
         if (available.contains(book)) {
             borrowed.add(book);
             available.remove(book);
@@ -73,7 +81,7 @@ public class BookManagement {
             return true;
         }
         else if (borrowed.contains(book)) {
-            waitList.add(user);
+            waitlist.add(user);
             return true;
         }
         return false;
@@ -94,8 +102,8 @@ public class BookManagement {
         user.unborrowBook(book);
         borrowed.remove(borrowed.indexOf(book));
         available.add(book);
-        if (!waitList.isEmpty()) {
-            checkoutBook(user, book);
+        if (!waitlist.isEmpty()) {
+            checkoutBook(waitlist.poll(), book);
         } 
         return true;
     }

@@ -20,15 +20,29 @@ public class tester{
         Book book5 = new Novel("The Hobbit", 310, Book.Condition.POOR, "J.R.R.", "Tolkien", 19370921, 345339681, Novel.Genre.FANTASY, true);
         Book book6 = new Novel("The Great Gatsby", 180, Book.Condition.NEW, "F. Scott", "Fitzgerald", 19250410, 743273567, Novel.Genre.CLASSIC, true);
         Book book7 = new Novel("The Great Gatsby", 180, Book.Condition.NEW, "F. Scott", "Fitzgerald", 19250410, 743273567, Novel.Genre.CLASSIC, true);
-        library.addBooks(new Book[]{book1, book2, book3, book4, book5});
+        library.addBooks(new Book[]{book1, book2, book3, book4, book5, book6, book7});
         System.out.println(book1.getInfo());
         System.out.println(book1);
         
         // Test borrowing books
         library.borrowBooks(jerry, book1);
-        library.borrowBooks(jerry, book2);
+        library.borrowBooks(jerry, book6);
+        library.borrowBooks(simon, book1);
         System.out.println(jerry.getBorrowedBooks());
-        book1.subtractBorrowedDays(30);
+        book1.subtractBorrowedDays(22);
+        System.out.println("\n\nOverdue books: for Jerry: ");
         System.out.println(jerry.getOverdue());
+        System.out.println("\nWaitlists: ");
+        for (BookManagement bookManager : (library.getBookManagers()).values()) {
+            System.out.println(bookManager.getWaitlist());
+        }
+
+        System.out.println("\nJerry returned The Great Gatsby andd borrowed TKAM. New waitlists: ");
+        library.returnBooks(jerry, book6);
+        // library.borrowBooks(jerry, book6);
+        for (BookManagement bookManager : (library.getBookManagers()).values()) {
+            System.out.println(bookManager.getWaitlist());
+        }
+        System.out.println(simon.getBorrowedBooks());
     }  
 }

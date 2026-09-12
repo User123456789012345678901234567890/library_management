@@ -31,7 +31,7 @@ public class User {
      * @param book The book to be borrowed by the user
      */
     public void borrowBook(Book book) {
-        book.setBorrowedDays();
+        book.setBorrowedDate();
         borrowedBooks.add(book);
     }
 
@@ -65,7 +65,7 @@ public class User {
      * Postcondition: An ArrayList of the user's borrowed books is returned.
      * @return an ArrayList of the user's borrowed books
      */
-    public ArrayList getBorrowedBooks() {
+    public ArrayList<B> getBorrowedBooks() {
         return borrowedBooks;
     }
 
@@ -74,7 +74,8 @@ public class User {
         ArrayList<Book> overdueBooks = new ArrayList<>();
         for (Book book : borrowedBooks) {
             Duration diff = Duration.between(date.atStartOfDay(), book.getBorrowedDate().atStartOfDay()).abs();
-            if (diff.minus(book.getMaxCheckoutDays()).isNegative()) 
+            // System.out.println("Duration: " + diff.getSeconds());
+            if (book.getMaxCheckoutDays().minus(diff).isNegative()) 
                 overdueBooks.add(book);
         }
         return overdueBooks;
