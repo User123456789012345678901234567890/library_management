@@ -1,6 +1,11 @@
 import java.time.*;
 import java.util.*;
-// Individual Books 
+
+/**
+ * Represents an individual book held by the library.
+ * Precondition: Concrete subclasses must provide checkout duration and information behavior.
+ * Postcondition: Each instance stores its identifying, descriptive, and borrowing information.
+ */
 public abstract class Book{
     private String title; 
     private int pageCount;
@@ -50,37 +55,81 @@ public abstract class Book{
         this.condition = condition;
     }
 
+    /**
+     * Returns the title of the book.
+     * Precondition: None.
+     * Postcondition: The book title is returned unchanged.
+     * @return the title of the book
+     */
     public String getTitle() {
         return title;
     } 
 
+    /**
+     * Returns the number of pages in the book.
+     * Precondition: None.
+     * Postcondition: The page count is returned unchanged.
+     * @return the number of pages in the book
+     */
     public int getPageCount() {
         return pageCount;
     }
 
+    /**
+     * Returns the condition of the book.
+     * Precondition: None.
+     * Postcondition: The current book condition is returned unchanged.
+     * @return the condition of the book
+     */
     public Condition getCondition() {
         return condition;
     }
 
+    /**
+     * Returns the author's name in last-name-first format.
+     * Precondition: None.
+     * Postcondition: The author's last name and first name are returned as one string.
+     * @return the author's name in the format "last name, first name"
+     */
     public String getAuthor() {
         return authorLastName + ", " + authorFirstName;
     }
 
+    /**
+     * Returns the publication date of the book.
+     * Precondition: None.
+     * Postcondition: The publication date is returned unchanged.
+     * @return the publication date in YYYYMMDD format
+     */
     public int getPublicationDate() {
         return publicationDate;
     }
 
+    /**
+     * Returns the date on which the book was borrowed.
+     * Precondition: None.
+     * Postcondition: The current borrowed date is returned, or null if the book has not been borrowed.
+     * @return the borrowed date, or null if the book has not been borrowed
+     */
     public LocalDate getBorrowedDate() {
         return borrowedDate;
     }
 
+    /**
+     * Records the current date as the date on which the book was borrowed.
+     * Precondition: None.
+     * Postcondition: The borrowed date is set to the current date.
+     */
     public void setBorrowedDate() {
         LocalDate now = LocalDate.now();
         borrowedDate = now;
     }
 
     /**
-     * For debugging purposes. Subtracts a specific amount of days from the date a book was borrowed. 
+     * Subtracts a number of days from the borrowed date for debugging purposes.
+     * Precondition: The book must have a borrowed date, and days must be non-negative.
+     * Postcondition: The borrowed date is moved earlier by the specified number of days.
+     * @param days the number of days to subtract
      */
     public void subtractBorrowedDays(int days) {
         // System.out.println("Initial date: " + borrowedDate);
@@ -101,7 +150,8 @@ public abstract class Book{
     /**
      * Defines the abstract method for getting the maximum number of days a book can be checked out.
      * Precondition: None.
-     * Postcondition: Not defined yet.
+    * Postcondition: The maximum checkout duration for this book is returned.
+    * @return the maximum checkout duration
      */
     public abstract Duration getMaxCheckoutDays();
     /**
@@ -121,7 +171,8 @@ public abstract class Book{
     /**
      * Defines the abstract method for getting the book's information as a HashMap.
      * Precondition: None.
-     * Postcondition: Not defined yet.
+    * Postcondition: A map containing this book's information is returned.
+    * @return a map containing the book's information
      */
     public abstract Map getInfo();
     /**

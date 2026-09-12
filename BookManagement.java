@@ -71,20 +71,30 @@ public class BookManagement {
      * Precondition: The user must be valid and non-empty, and the book must be available for checkout.
      * Postcondition: The book is checked out to the user and moved from the available list to the borrowed list.
      * @param user The user who is checking out the book
+     * @return returns true if the user successfully borrowed the book and false if the user was placed in the waitlist
      */
     public boolean checkoutBook(User user, Book book) {
         // Store book under User
-        if (available.contains(book)) {
+        if (!available.isEmpty() && !borrowed.contains(book)) {
+            user.borrowBook(book);
             borrowed.add(book);
             available.remove(book);
-            user.borrowBook(book);
             return true;
         }
-        else if (borrowed.contains(book)) {
+        else if (!available.isEmpty()) {
+            user.borrowBook(available.get(0));
+            borrowed.add(available.get(0));
+            available.remove(0); 
+            return true;
+        }
+        else if (user.hasBook(book)) { // user renews a book
+            book.setBorrowedDate();
+            return true;
+        }
+        else {
             waitlist.add(user);
-            return true;
+            return false;
         }
-        return false;
     }
     
     /**
