@@ -47,7 +47,7 @@ public class Library{
     private static void openLoginSession(LibraryManagement library){
         User user = null;
         while (true){
-            System.out.println("To log in, please enter your username (min 5 characters). Type 0 to escape. ");
+            System.out.println("\nTo log in, please enter your username (min 5 characters). Type 0 to escape. ");
             String username = getUserInput(new String[]{}, 5);
             if (username.equals("0")){
                 return;
@@ -72,7 +72,7 @@ public class Library{
                 break;
             }
         }
-        System.out.println("Signed in as " + user.getName() + " (ID: " + user.getUserID() + ")."); //we have an id somewhere so add it in here or we can leave it out if u want
+        System.out.println("\nSigned in as " + user.getName() + " (ID: " + user.getUserID() + ")."); //we have an id somewhere so add it in here or we can leave it out if u want
         ArrayList<Book> overdueBooks = user.getOverdue();
         user.setPenalty(!overdueBooks.isEmpty()); 
         if (!overdueBooks.isEmpty()){
