@@ -155,19 +155,31 @@ public class User {
 
     /**
      * Checks if the user has borrowed a specific book.
-     * Precondition: The book must be valid and non-empty.
-     * Postcondition: Returns true if the user has borrowed the book, false otherwise.
-     * @param book The book to check if the user has borrowed
-     * @return true if the user has borrowed the book, false otherwise
+     * Precondition: The isbn must be owned by thebook
+     * Postcondition: Returns the book whose isbn was requested; null if book not found
+     * @param isbn The isbn of the book to check if the user has borrowed
+     * @return The book whose isbn was requested; null if book not found
      */
-    public boolean hasBook(Book book) {
+    public Book hasBook(long isbn) {
         for (Book b : borrowedBooks) {
-            if (book.getISBN() == b.getISBN()) {
-                return true;
+            if (isbn == b.getISBN()) {
+                return b;
             }
         }
-        return false;
+        return null;
     }
+
+    /**
+     * Checks if the user has borrowed a specific book.
+     * Precondition: The book must be valid and non-empty.
+     * Postcondition: Returns the book; null if book not found in user list
+     * @param book The book to check if the user has borrowed
+     * @return The book whose isbn was requested; null if book not found
+     */
+    public Book hasBook(Book book) {
+        return hasBook(book.getISBN());
+    }
+
     
     /**
      * Verifies if the provided credentials match the user's username and password.

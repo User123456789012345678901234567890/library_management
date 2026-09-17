@@ -87,7 +87,7 @@ public class LibraryManagement {
      */
     private void returnBooks(User user, Book... books) { 
         for (Book book : books) {
-            if (user.hasBook(book)) {
+            if (user.hasBook(book) != null) {
                 BookManagement bookManager = bookManagers.get(book.getISBN()); 
                 bookManager.returnBook(user, book); // Changes the book in the specific BookManager from borrowed to available
             }
@@ -129,6 +129,13 @@ public class LibraryManagement {
         }
     }
 
+    public enum BookBorrowResult{
+        NO_BOOK_REGISTERED,
+        NO_BOOK_FOUND,
+        RENEWED,
+        BORROWED
+    }
+
     /**
      * Checks out the first available copy of a book with the given ISBN to a user.
      * Precondition: The user must be non-null and the ISBN must exist in the library collection.
@@ -137,13 +144,27 @@ public class LibraryManagement {
      * @param isbn The ISBN of the book to borrow
      * @return true if an available copy was successfully checked out, false otherwise
      */
-    public boolean borrowBooks(User user, long isbn){
+    public BookBorrowResult borrowBooks(User user, long isbn){
         if (bookManagers.containsKey(isbn)) {
             BookManagement bookManager = bookManagers.get(isbn);
-            Book book = bookManager.getAvailableBooks().get(0);
-            return bookManager.checkoutBook(user, book);
+            Book userBook = user.hasBook(isbn);
+            if (userBook != null){
+                // Renew book
+                bookManager.checkoutBook(user, userBook);
+                return BookBorrowResult.RENEWED;
+            }
+            if (bookManager.getAvailableBooks().size() > 0) {
+                Book book = bookManager.getAvailableBooks().get(0);
+                bookManager.checkoutBook(user, book);
+                return BookBorrowResult.BORROWED;
+            }
+            else{
+                return BookBorrowResult.NO_BOOK_FOUND;
+            }
+            
+            
         }
-        return false;
+        return BookBorrowResult.NO_BOOK_REGISTERED;
     }
     
     /**
@@ -217,6 +238,16 @@ public class LibraryManagement {
      */
     public Map<Long, BookManagement> getBookManagers() {
         return bookManagers;
+    }
+
+    /**
+     * Returns the map of user managers keyed by ISBN.
+     * Precondition: None.
+     * Postcondition: The map containing ints mapped to their User objects is returned.
+     * @return A Map of int id to user instances
+     */
+    public Map<Integer, User> getUserManagers() {
+        return users;
     }
 
     public boolean checkUnique(String username) {

@@ -14,19 +14,18 @@ public class Library{
             try{
                 str = SCANNER.nextLine();
                 // scanner.close();
-                if (allowedInputs.length == 0){
-                    return str;
+                if (allowedInputs.length != 0){
+                    for (String allowedInput : allowedInputs){
+                        if (str.equals(allowedInput)){
+                            return str;
+                        }
+                    }
                 }
                 if (str.length() < minLength){
                     System.out.println("Your input needs to be at least " + minLength + " characters. Please try again.");
                     continue;
                 } 
-                for (String allowedInput : allowedInputs){
-                    if (str.equals(allowedInput)){
-                        return str;
-                    }
-                }
-                System.out.println("Your input wasn't a valid command. Please try again.");
+                return str;
             }
             catch(Exception e){
                 System.out.println("Your input wasn't a valid command. Please try again.");
@@ -48,7 +47,7 @@ public class Library{
         User user = null;
         while (true){
             System.out.println("\nTo log in, please enter your username (min 5 characters). Type 0 to escape. ");
-            String username = getUserInput(new String[]{}, 5);
+            String username = getUserInput(new String[]{}, 0);
             if (username.equals("0")){
                 return;
             }
@@ -166,11 +165,20 @@ public class Library{
             System.out.println("\nCheck out book? 1 - Yes, 2 - No");
             int checkOutSelection = getUserInput(new int[]{1,2});
             if (checkOutSelection == 1){
-                if(library.borrowBooks(user, foundBookISBN)) {
-                    System.out.println("Book successfully borrowed!");
-                }
-                else {
-                System.out.println("No copies available. User placed on waitlist");
+                LibraryManagement.BookBorrowResult res = library.borrowBooks(user, foundBookISBN);
+                switch (res){
+                    case LibraryManagement.BookBorrowResult.BORROWED:
+                        System.out.println("Book successfully borrowed!");
+                        break;
+                    case LibraryManagement.BookBorrowResult.NO_BOOK_FOUND:
+                        System.out.println("No copies available. User placed on waitlist");
+                        break;
+                    case LibraryManagement.BookBorrowResult.NO_BOOK_REGISTERED:
+                        System.out.println("No copies available. Ask your library to add copies of this book to its collection.");
+                        break;
+                    case LibraryManagement.BookBorrowResult.RENEWED:
+                        System.out.println("Book was already checked out. Book renewed!");
+                        break;
                 }
             }
         }
@@ -182,7 +190,7 @@ public class Library{
         int page = 0;
         int maxPage = (int)Math.ceil(keys.length / 10); 
         while (true){
-            System.out.println("Page " + (page + 1) + "/" + (maxPage + 1));
+            System.out.println("\nPage " + (page + 1) + "/" + (maxPage + 1));
             for (int i = page * 10; i < (int)Math.min(page * 10 + 10, keys.length); i++){
                 long ISBN = keys[i].longValue();
                 Map<?, ?> info = catalog.get(ISBN).getBookInfo(); //what does this do doesn't display any2
@@ -225,7 +233,6 @@ public class Library{
                             if (checkOutSelection == 1){
                                 library.borrowBooks(user, ISBN);
                                 System.out.println("Checked out " + bookInfo.get("Title") + ".");
-                                System.out.println();
                             }
                         }
                         else{
@@ -241,6 +248,7 @@ public class Library{
     }
     private static void openReturnBookSession(LibraryManagement library, User user){
         ArrayList<Book> borrowedBooks = user.getBorrowedBooks();
+        System.out.println();
         if (borrowedBooks.isEmpty()){ 
             System.out.println("You have no borrowed books. Borrow a book to return it.");
         }
@@ -270,14 +278,15 @@ public class Library{
     
     private static void openLostBookSession(LibraryManagement library, User user){
         ArrayList<Book> borrowedBooks = user.getBorrowedBooks();
+        System.out.println();
         if (borrowedBooks.isEmpty()){ 
-            System.out.println("You have no borrowed books");
+            System.out.println("You have no borrowed books.");
         }
         else{
             System.out.println("Your borrowed books:"); // its better to do it as one because whether the user wants to see all their borrowed books or wants to return a book they'll be shown thei
             for (int i = 0; i < borrowedBooks.size(); i++){
-                Book book = borrowedBooks.get(i-1);
-                System.out.println(i + ":" + book.getTitle() + " by " + book.getAuthor() + " - Borrowed " + book.getBorrowedDate());
+                Book book = borrowedBooks.get(i);
+                System.out.println((i+1) + ": " + book.getTitle() + " by " + book.getAuthor() + " - Borrowed " + book.getBorrowedDate());
             } 
             System.out.println("To mark a book as lost, please enter the number to the left of the book title. Type 0 to escape."); 
             while (true){ 
@@ -302,20 +311,24 @@ public class Library{
     }
      
     private static void openAccountCreationSession(LibraryManagement library){
-        System.out.println("Beginning Account Creation.");
+        System.out.println("\nBeginning account creation...");
         System.out.println("Please enter your first name: ");
         String firstName = getUserInput(new String[]{}, 2);
         System.out.println("Please enter your last name: ");
         String lastName = getUserInput(new String[]{}, 2);
         while (true) {
             System.out.println("Please enter your username (min 5 characters):  ");
-            String username = getUserInput(new String[]{}, 5);
+            String username = "";
+            do{
+                username = getUserInput(new String[]{}, 0);
+            }
+            while (username.length() <= 5);
             if (library.checkUnique(username)) {
                 User newUser = new User(firstName, lastName, username);
                 library.addUsers(newUser);
                 System.out.println("Welcome to " + library.getName() + " library, " + newUser.getName() +"! Your user ID is " + newUser.getUserID() + ". Please remember this ID for future reference.");
                 break;
-        }       
+            }       
         System.out.println("Username already taken! Please try again.");
         }
     }
@@ -327,21 +340,23 @@ public class Library{
             System.out.println("Incorrect password. Returning to main menu.");
             return;
         }
-        System.out.println("Welcome, admin!");
+        System.out.println("\nWelcome, admin!");
         while(true){
-            System.out.println("\n| To view the full catalog, type 1");
+            System.out.println("| To view the full catalog, type 1");
             System.out.println(("| To view all waitlists, type 2"));
-            System.out.println(("| To log out, type 3"));
-            switch (getUserInput(new int[]{1,2,3})){
+            System.out.println(("| To view all users, type 3"));
+            System.out.println(("| To add a book to the system, type 4"));
+            System.out.println(("| To log out, type 5"));
+            switch (getUserInput(new int[]{1,2,3, 4, 5})){
                 case 1:
                     for (BookManagement manager : library.getBookManagers().values()){
                         Map<?, ?> info = manager.getBookInfo();
                         String title = (info == null) ? "(no copies)" : String.valueOf(info.get("Title"));
                         System.out.println("| ISBN " + manager.getISBN() + " - " + title + " (" + manager.getAvailableBooks().size()+ " of " + manager.getBookCount() + " available)");
-
                     }
                     break;
                 case 2:
+                    System.out.println("Waitlists:");
                     for (BookManagement manager : library.getBookManagers().values()){
                         if (!manager.getWaitlist().isEmpty()){
                             System.out.println("| ISBN " + manager.getISBN() + " - " + manager.getWaitlist().size() + " waiting");
@@ -349,6 +364,21 @@ public class Library{
                     }
                     break;
                 case 3:
+                    for (User user : library.getUserManagers().values()){
+                        System.out.println(user.getUserID() + " (" + user.getUsername() + ")");
+                    }
+                    break;
+                case 4:
+                    // add book to system (prompt admin to fill out all book details sequentially)
+                    while (true) {
+                        System.out.println("\nEnter ISBN or 0 to exit: ");
+                        String input = getUserInput(new String[]{}, 0).trim();
+                        if (input.equals("0")) {
+                            break;
+                        }
+                        else if 
+                    }
+                case 5:
                     System.out.println("Admin logged out.");
                     return;
         }

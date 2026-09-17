@@ -20,7 +20,7 @@ public class tester{
         Book book5 = new Novel("The Hobbit", 310, Book.Condition.POOR, "J.R.R.", "Tolkien", 19370921, 345339681, Novel.Genre.FANTASY, true);
         Book book6 = new Novel("The Great Gatsby", 180, Book.Condition.NEW, "F. Scott", "Fitzgerald", 19250410, 743273567, Novel.Genre.CLASSIC, true);
         Book book7 = new Novel("The Great Gatsby", 180, Book.Condition.NEW, "F. Scott", "Fitzgerald", 19250410, 743273567, Novel.Genre.CLASSIC, true);
-        library.addBooks(new Book[]{book1, book2, book3, book4, book5, book6});
+        library.addBooks(new Book[]{book1, book2, book3, book4, book5, book6, book7});
         System.out.println(book1.getInfo());
         System.out.println(book1);
         
@@ -39,7 +39,7 @@ public class tester{
             System.out.println(bookManager.getWaitlist());
         }
 
-        System.out.println("\nJerry returned The Great Gatsby andd borrowed TKAM. New waitlists: ");
+        System.out.println("\nJerry returned The Great Gatsby and borrowed TKAM. New waitlists: ");
         library.returnBooks(jerry, book6.getISBN());
         library.borrowBooks(jerry, book2);
         i = 1;

@@ -87,7 +87,7 @@ public class BookManagement {
             available.remove(0); 
             return true;
         }
-        else if (user.hasBook(book)) { // user renews a book
+        else if (user.hasBook(book) != null) { // user renews a book
             book.setBorrowedDate();
             return true;
         }
