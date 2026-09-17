@@ -114,7 +114,7 @@ public class Library{
             return;
         }
         while (true){
-            System.out.println("Preparing to borrow book...");
+            System.out.println("\nPreparing to borrow book...");
             System.out.println("| To search for a book by name, type 1");
             System.out.println("| To browse through our list of books, type 2");
             System.out.println("| To exit out of borrowing mode, type 3");
@@ -127,7 +127,7 @@ public class Library{
                     openBrowseSession(library, user);
                     break;
                 case 3:
-                    System.out.println("Exiting out of borrowing books...");
+                    System.out.println("\nExiting out of borrowing books...");
                     return;
                 default:
                     System.out.println("Your input wasn't a valid choice. Please try again.");
@@ -137,7 +137,7 @@ public class Library{
     }
 
     private static void openSearchSession(LibraryManagement library, User user){
-        System.out.println("Opening Book Searcher...");
+        System.out.println("\nOpening Book Searcher...");
         String bookName = getUserInput(new String[]{}, 0).trim();
         long[] bookISBNS = library.getBookISBNs();
         long foundBookISBN = -1;
@@ -159,19 +159,24 @@ public class Library{
             System.out.println("Did not find book called " + bookName + ".");
         } 
         else{
-            System.out.println("Book Found!");
+            System.out.println("\nBook Found!");
             for (Map.Entry<?, ?> entry : info.entrySet()) {
                 System.out.println(entry.getKey() + ": " + entry.getValue());
             }
             System.out.println("\nCheck out book? 1 - Yes, 2 - No");
             int checkOutSelection = getUserInput(new int[]{1,2});
             if (checkOutSelection == 1){
-                library.borrowBooks(user, foundBookISBN);
+                if(library.borrowBooks(user, foundBookISBN)) {
+                    System.out.println("Book successfully borrowed!");
+                }
+                else {
+                System.out.println("No copies available. User placed on waitlist");
+                }
             }
         }
     }
     private static void openBrowseSession(LibraryManagement library, User user){ //time to debugg yippeee
-        System.out.println("Opening Book Browser...");
+        System.out.println("\nOpening Book Browser...");
         Map<Long, BookManagement> catalog = library.getBookManagers();
         Long[] keys = catalog.keySet().toArray(Long[]::new);
         int page = 0;
@@ -209,11 +214,12 @@ public class Library{
                     try{
                         long ISBN = Long.parseLong(input);
                         if (catalog.containsKey(ISBN)){
-                            System.out.println("Book Found!"); // aim to make this also work with the number of the book in the list, not just typing out the entire ISBN
+                            System.out.println("\nBook Found!"); // aim to make this also work with the number of the book in the list, not just typing out the entire ISBN
                             Map<?,?> bookInfo = catalog.get(ISBN).getBookInfo();
                             for (Map.Entry<?, ?> entry : bookInfo.entrySet()) {
                                 System.out.println(entry.getKey() + ": " + entry.getValue());
                             }
+                            System.out.println("Number of available copies: " + catalog.get(ISBN).getAvailableBooks().size());
                             System.out.println("Check out book? 1 - Yes, 2 - No");
                             int checkOutSelection = getUserInput(new int[]{1,2});
                             if (checkOutSelection == 1){
