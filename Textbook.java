@@ -67,6 +67,7 @@ class Textbook extends Book {
         Map<String, String> info = super._getInfo();
         info.put("Subject", subject.toString());
         info.put("Course", course);
+        info.put("Type", "Textbook");
         return info;
     }
     

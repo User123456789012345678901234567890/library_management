@@ -369,14 +369,85 @@ public class Library{
                     }
                     break;
                 case 4:
+                    boolean flag = true;
                     // add book to system (prompt admin to fill out all book details sequentially)
-                    while (true) {
+                    while (flag) {
                         System.out.println("\nEnter ISBN or 0 to exit: ");
-                        String input = getUserInput(new String[]{}, 0).trim();
-                        if (input.equals("0")) {
+                        String isbn = getUserInput(new String[]{}, 0).trim();
+                        if (isbn.equals("0")) {
                             break;
                         }
-                        else if 
+                        String title;
+                        int pageCount;
+                        String author;
+                        boolean found = false;
+                        
+                        for (long n : library.getBookISBNs()) {
+                            if (n == Long.parseLong(isbn)) {
+                                Map info = library.getBookInfo(Long.parseLong(isbn));
+                                title = (String) info.get("Title");
+                                pageCount = (int) info.get("Page Count");
+                                author = (String) info.get("Author");
+                                found = true;
+                            }
+                        }
+                        if (!found) {
+                            while (true) {
+                                System.out.println("\nEnter book title or 0 to exit: ");
+                                try {
+                                    title = getUserInput(new String[]{}, 0);
+                                    if (title.equals("0")) 
+                                        flag = false;
+                                        break;
+                                }
+                                catch (Exception e) {
+                                    System.out.println("Invalid input! Please try again.");
+                                }
+                            }
+
+                            while (true) {
+                                System.out.println("\nEnter author or 0 to exit: ");
+                                try {
+                                    author = getUserInput(new String[]{}, 0);
+                                    if (author.equals("0")) 
+                                        flag = false;
+                                        break;
+                                }
+                                catch (Exception e) {
+                                    System.out.println("Invalid input! Please try again.");
+                                }
+                            }
+
+                            while (true) {
+                                System.out.println("\nEnter # of pages or 0 to exit: ");
+                                try {
+                                    pageCount = Integer.parseInt(getUserInput(new String[]{}, 0));
+                                    if (pageCount == 0) {
+                                        flag = false;
+                                        break;
+                                    }
+                                }
+                                catch (Exception e) {
+                                    System.out.println("Invalid input! Please try again.");
+                                }
+                            }
+
+                            while (true) {
+                                System.out.println("\nEnter # of pages or 0 to exit: ");
+                                try {
+                                    pageCount = Integer.parseInt(getUserInput(new String[]{}, 0));
+                                    if (pageCount == 0) {
+                                        flag = false;
+                                        break;
+                                    }
+                                }
+                                catch (Exception e) {
+                                    System.out.println("Invalid input! Please try again.");
+                                }
+                            }
+
+                        }
+
                     }
                 case 5:
                     System.out.println("Admin logged out.");

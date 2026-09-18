@@ -40,6 +40,7 @@ public class ChildrensBook extends Book {
     public Map getInfo() {
         Map<String, String> info = super._getInfo();
         info.put("Lexile", Integer.toString(lexile));
+        info.put("Type", "Childrens Book");
         return info;
     }
 

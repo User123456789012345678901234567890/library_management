@@ -58,6 +58,7 @@ public class Novel extends Book {
         Map<String, String> info = super._getInfo();
         info.put("Genre", genre.toString());
         info.put("Fictional", Boolean.toString(fictional));
+        info.put("Type", "Novel");
         return info;
     }
 
