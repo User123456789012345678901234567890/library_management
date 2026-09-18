@@ -34,14 +34,30 @@ public class Library{
         }
     }
     public static int getUserInput(int[] allowedInputs){
-        if (allowedInputs.length == 0){
-            return Integer.parseInt(getUserInput(new String[]{}, 1));
+        while (true){
+            if (allowedInputs.length == 0){
+                String userInput = getUserInput(new String[]{}, 1);
+                try{
+                    return Integer.parseInt(userInput);
+                }
+                catch(Exception e){
+                    System.out.println("Your input wasn't a valid command. Please try again.");
+                    continue;
+                }
+            }
+            String[] allowedInputsStr = new String[allowedInputs.length];
+            for (int i = 0; i < allowedInputs.length; i++){
+                allowedInputsStr[i] = Integer.toString(allowedInputs[i]);
+            }
+            String userInput = getUserInput(allowedInputsStr, 1);
+            try{
+                return Integer.parseInt(userInput);
+            }
+            catch(Exception e){
+                System.out.println("Your input wasn't a valid command. Please try again.");
+                continue;
+            }
         }
-        String[] allowedInputsStr = new String[allowedInputs.length];
-        for (int i = 0; i < allowedInputs.length; i++){
-            allowedInputsStr[i] = Integer.toString(allowedInputs[i]);
-        }
-        return Integer.parseInt(getUserInput(allowedInputsStr, 1));
 
     }
     private static void openLoginSession(LibraryManagement library){
@@ -357,7 +373,7 @@ public class Library{
                     }
                     break;
                 case 2:
-                    System.out.println("Waitlists:");
+                    System.out.println("Waitlists:"); 
                     for (BookManagement manager : library.getBookManagers().values()){
                         if (!manager.getWaitlist().isEmpty()){
                             System.out.println("| ISBN " + manager.getISBN() + " - " + manager.getWaitlist().size() + " waiting");
@@ -547,58 +563,55 @@ public class Library{
                             if (type.equalsIgnoreCase("Novel")) {
                                 Novel.Genre genre = Novel.Genre.OTHER;
                                 boolean fictional;
-                                String genreString = "";
+                                int genreInt = 0;
                                 while (true) {
-                                    System.out.println("\nEnter book genre: ");
-                                    genreString = getUserInput(new String[]{}, 0);
-                                    if (genreString.equalsIgnoreCase("SCIENCE FICTION")) {
-                                        genre = Novel.Genre.SCIENCE_FICTION;
-                                    }
-                                    else if (genreString.equalsIgnoreCase("ROMANCE")) {
-                                        genre = Novel.Genre.ROMANCE;
-                                    }
-                                    else if (genreString.equalsIgnoreCase("CLASSIC")) {
-                                        genre = Novel.Genre.CLASSIC;
-                                    }
-                                    else if (genreString.equalsIgnoreCase("HISTORICAL FICTION")) {
-                                        genre = Novel.Genre.HISTORICAL_FICTION;
-                                    }
-                                    else if (genreString.equalsIgnoreCase("BIOGRAPHY")) {
-                                        genre = Novel.Genre.BIOGRAPHY;
-                                    }
-                                    else if (genreString.equalsIgnoreCase("MYSTERY")) {
-                                        genre = Novel.Genre.MYSTERY;
-                                    }
-                                    else if (genreString.equalsIgnoreCase("HORROR")) {
-                                        genre = Novel.Genre.HORROR;
-                                    }
-                                    else if (genreString.equalsIgnoreCase("THRILLER")) {
-                                        genre = Novel.Genre.THRILLER;
-                                    }
-                                    else if (genreString.equalsIgnoreCase("FANTASY")) {
-                                        genre = Novel.Genre.FANTASY;
-                                    }
-                                    else if (genreString.equalsIgnoreCase("OTHER")) {
-                                        genre = Novel.Genre.OTHER;
-                                    }
-                                    else if (genreString.equals("0")) {
+                                    System.out.println("""
+                                        Enter book genre: 
+                                        1: SCIENCE FICTION
+                                        2: ROMANCE  
+                                        3: CLASSIC
+                                        4: HISTORICAL FICTION
+                                        5: BIOGRAPHY
+                                        6: MYSTERY
+                                        7: HORROR
+                                        8: THRILLER
+                                        9: FANTASY
+                                        10: OTHER
+                                        0: Exit
+                                    """);
+                                    genreInt = getUserInput(new int[]{0,1,2,3,4,5,6,7,8,9,10});
+                                    
+                                    if (genreInt == 0) {
                                         break;
                                     }
                                     else {
-                                        System.out.println("Invalid book genre! Please try again.");
-                                        continue;
+                                        genre = Novel.Genre.values()[genreInt - 1];
+                                        break;
                                     }
-                                    break;
+                                    // System.out.println("Invalid book genre! Please try again.");
+                                    // continue;
+                                
                                 }
-                                if (genreString.equals("0")) {
+                                if (genreInt == 0) {
                                     break;
                                 }
  
                                 while (true) {
-                                    System.out.println("\nIs the book fictional? (true/false): ");
+                                    System.out.println("""
+                                    Is the book fictional? 
+                                        1: True
+                                        2: False
+                                        0: Exit
+                                    """);
                                     try {
-                                        fictional = Boolean.parseBoolean(getUserInput(new String[]{}, 0));
-                                        if (fictional == false || fictional == true) {
+                                        int fictionalInt;
+                                        fictionalInt = Integer.parseInt(getUserInput(new String[]{}, 0));
+                                        if (fictionalInt == 1) {
+                                            fictional = true;
+                                            break;
+                                        }
+                                        else if (fictionalInt == 2) {
+                                            fictional = false;
                                             break;
                                         }
                                     }
