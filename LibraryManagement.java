@@ -181,7 +181,7 @@ public class LibraryManagement {
     }
 
     /**
-     * Removes a book from the library's collection, such as if a book was lost or Hitler burned a book.
+     * Removes a book from the library's collection, such as if a book was lost or someone burned a book.
      * Precondition: The ISBN must be valid and exist in the library's book collection.
      * Postcondition: The book is removed from the library's collection.
      * @param Book The book to be removed from the library's collection
@@ -194,7 +194,7 @@ public class LibraryManagement {
     }
 
     /**
-     * Removes a book from the library's collection, such as if a book was lost or Hitler burned a book.
+     * Removes a book from the library's collection, such as if a book was lost or someone burned a book.
      * Precondition: The ISBN must be valid and exist in the library's book collection.
      * Postcondition: The book is removed from the library's collection.
      * @param Book The book to be removed from the library's collection

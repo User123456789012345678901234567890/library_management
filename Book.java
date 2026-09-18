@@ -166,6 +166,7 @@ public abstract class Book{
         info.put("Page Count", Integer.toString(pageCount));
         info.put("Condition", condition.toString());
         info.put("Author", authorFirstName + " " + authorLastName);
+        info.put("Publication Date", Integer.toString(publicationDate));
         return info;
     }
     /**
