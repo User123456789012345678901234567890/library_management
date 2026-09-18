@@ -467,13 +467,22 @@ public class Library{
                                 }
                                 catch (Exception e) {
                                     System.out.println("Invalid input! Please try again.");
-                                }
-                                if (pageCount == 0) {
-                                    break;
+                                    continue;
                                 }
                             }
+                            if (pageCount == 0) {
+                                    break;
+                            }
 
-                            System.out.println("\nEnter book condition (poor, fair, good, excellent, new): ");
+                            System.out.println("""
+                                Enter book condition:
+                                1: POOR
+                                2: FAIR 
+                                3: GOOD
+                                4: EXCELLENT
+                                5: NEW
+                                0: EXIT
+                            """);
                             String conditionString = "";
                             while (true) {
                                 try {
@@ -481,19 +490,19 @@ public class Library{
                                     if (conditionString.equals("0")) {
                                         break;
                                     }
-                                    if (conditionString.equalsIgnoreCase("POOR")) {
+                                    if (conditionString.equalsIgnoreCase("1")) {
                                         condition = Book.Condition.POOR;
                                     }
-                                    else if (conditionString.equalsIgnoreCase("FAIR")) {
+                                    else if (conditionString.equalsIgnoreCase("2")) {
                                         condition = Book.Condition.FAIR;
                                     }
-                                    else if (conditionString.equalsIgnoreCase("GOOD")) {
+                                    else if (conditionString.equalsIgnoreCase("3")) {
                                         condition = Book.Condition.GOOD;
                                     }
-                                    else if (conditionString.equalsIgnoreCase("EXCELLENT")) {
+                                    else if (conditionString.equalsIgnoreCase("4")) {
                                         condition = Book.Condition.EXCELLENT;
                                     }
-                                    else if (conditionString.equalsIgnoreCase("NEW")) {
+                                    else if (conditionString.equalsIgnoreCase("5")) {
                                         condition = Book.Condition.NEW;
                                     }
                                     else {
