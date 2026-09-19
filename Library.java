@@ -358,10 +358,11 @@ public class Library{
             System.out.println("Incorrect password. Returning to main menu.");
             return;
         }
-        boolean flag = false;
+        boolean flag = true;
         while(flag){
             System.out.println("\nWelcome, admin!");
-            System.out.println("| To view the full catalog, type 1");
+            while (true) {
+            System.out.println("\n| To view the full catalog, type 1");
             System.out.println(("| To view all waitlists, type 2"));
             System.out.println(("| To view all users, type 3"));
             System.out.println(("| To add a book to the system, type 4"));
@@ -641,9 +642,11 @@ public class Library{
                 } 
                 case 5:
                     System.out.println("Admin logged out.");
+                    flag = false;
                     break;
         }
         }   
+    }
     }
     /**
      * 
