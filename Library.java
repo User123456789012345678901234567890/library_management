@@ -68,6 +68,10 @@ public class Library{
             if (username.equals("0")){
                 return;
             }
+            if (library.checkUnique(username)) {
+                System.out.println("User not in system. Please try again!");
+                continue;
+            }
             while (true){
                 System.out.println("Enter your password. Type 0 to escape, or type 1 to re-enter username. "); //
                 String password = getUserInput(new String[]{}, 1);
