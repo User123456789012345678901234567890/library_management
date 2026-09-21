@@ -509,8 +509,7 @@ public class Library{
                         1: Novel
                         2: Childrens' Book 
                         3: Textbook
-                        0: Exit
-                    """);
+                        0: Exit""");
                     typeInt = getUserInput(new int[]{0, 1, 2, 3});
                     switch (typeInt){
                         case 0: 
@@ -532,8 +531,7 @@ public class Library{
                                 8: THRILLER
                                 9: FANTASY
                                 10: OTHER
-                                0: Exit
-                                """);
+                                0: Exit""");
                                 genreInt = getUserInput(new int[]{0,1,2,3,4,5,6,7,8,9,10});
                                 
                                 if (genreInt == 0) {
@@ -557,8 +555,7 @@ public class Library{
                                 Is the book fictional? 
                                     1: True
                                     2: False
-                                    0: Exit
-                                """);
+                                    0: Exit""");
                                 try {
                                     int fictionalInt = getUserInput(new int[]{1, 2});
                                     if (fictionalInt == 1) {
@@ -612,8 +609,7 @@ public class Library{
                                 19: LAW
                                 20: BUSINESS
                                 21: OTHER
-                                0: Exit
-                            """);
+                                0: Exit""");
                             int[] range = IntStream.range(0, 22).toArray();
                             subjectInt = getUserInput(range);
                             if (subjectInt == 0) {
@@ -648,6 +644,10 @@ public class Library{
                 int conditionInt = getUserInput(new int[]{0, 1, 2, 3, 4, 5});
                 if (conditionInt == 0) {
                     break;
+                }
+                if (conditionInt > 5) {
+                    System.out.println("Invalid input. Please try again!");
+                    continue;
                 }
                 newBook.setCondition(condition.values()[conditionInt]);
                 library.addBooks(newBook);
