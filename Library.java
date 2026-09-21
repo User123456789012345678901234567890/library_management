@@ -376,8 +376,8 @@ public class Library{
                         System.out.println("| ISBN " + manager.getISBN() + " - " + title + " (" + manager.getAvailableBooks().size()+ " of " + manager.getBookCount() + " available)");
                     }
                     System.out.println("""
-                            Use /book view <isbn> to view a user's information.
-                            Use /book remove <isbn> to remove a user from the database.""");
+                            Use /book view <isbn> in the terminal to view a user's information.
+                            Use /book remove <isbn> in the terminal to remove a user from the database.""");
                     break;
                 case 2:
                     System.out.println("Waitlists:"); 
@@ -392,9 +392,8 @@ public class Library{
                         System.out.println(user.getUserID() + " (" + user.getUsername() + ")");
                     }
                     System.out.println("""
-                            Use /user view <username> to view a user's information.
-                            Use /user remove <username> to remove a user from the database.
-                            """);
+                            Use /user view <username> in the terminal to view a user's information.
+                            Use /user remove <username> in the terminal to remove a user from the database.""");
                     break;
                 case 4:
                     // add book to system (prompt admin to fill out all book details sequentially)
@@ -713,9 +712,8 @@ public class Library{
                 case "/help":
                     System.out.println("""
                     Commands (Type them to view more info):
-                        /user
-                        /book
-                    """);
+                    /user
+                    /book""");
 
             }
         }
