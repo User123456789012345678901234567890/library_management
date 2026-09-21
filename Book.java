@@ -86,6 +86,16 @@ public abstract class Book{
     }
 
     /**
+     * Sets the condition of the book.
+     * Precondition: condition is a valid Condition.
+     * Postcondition: The current book condition is set to the given condition.
+     * @param condition the condition to set the book to.
+     */
+    public void setCondition(Condition condition){
+        this.condition = condition;
+    }
+
+    /**
      * Returns the author's name in last-name-first format.
      * Precondition: None.
      * Postcondition: The author's last name and first name are returned as one string.

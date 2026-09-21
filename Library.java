@@ -406,251 +406,11 @@ public class Library{
                     // add book to system (prompt admin to fill out all book details sequentially)
                     // boolean flag = true;
                     System.out.println("Adding books to the system.");
-                    while (true) {
-                        int isbn = 0;
-                        System.out.println("\nEnter ISBN or 0 to exit: ");
-                        isbn = getUserInput(new int[]{});
-                        if (isbn == 0) {
-                            break;
-                        }
-
-                        String title;
-                        int pageCount = 0;
-                        String firstName = "";
-                        String lastName = "";
-                        Book.Condition condition = Book.Condition.NEW;
-                        int publicationDate;
-                        boolean found = false;
-                        
-                        for (long n : library.getBookISBNs()) {
-                            if (n == isbn) {
-                                Map info = library.getBookInfo(Integer.toUnsignedLong(isbn));
-                                title = (String) info.get("Title");
-                                System.out.println("Book type found in database as " + title + "! Preloaded data.");
-                                pageCount = Integer.parseInt((String)info.get("Page Count"));
-                                String author = (String) info.get("Author");
-                                firstName = author.split(" ")[0];
-                                lastName = author.split(" ")[author.split(" ").length - 1];
-                                publicationDate = Integer.parseInt((String)info.get("Publication Date"));
-                                lastName = author.split(" ")[0];
-                                publicationDate = Integer.parseInt((String)info.get("Publication Date"));
-                                found = true;
-                            }
-                        }
-                        System.out.println("""
-                            Enter book condition:
-                                1: POOR
-                                2: FAIR 
-                                3: GOOD
-                                4: EXCELLENT
-                                5: NEW
-                                0: Exit""");
-                        int conditionInt = getUserInput(new int[]{0, 1, 2, 3, 4, 5});
-                        if (conditionInt == 0) {
-                            break;
-                        }
-
-                        if (!found) {
-                            System.out.println("Book not found in database, adding new book type.");
-                            while (true) {
-                            System.out.println("\nEnter book title or type 0 to exit: ");
-                            title = getUserInput(new String[]{}, 1);
-                            if (title.equals("0")) {
-                                continue;
-                            }
-
-                            
-                            System.out.println("\nEnter author without middle name (i.e. Stephen King) or type 0 to exit: ");
-                            String author = getUserInput(new String[]{}, 1);
-                            if (author.equals("0")) {
-                                break;
-                            }
-                            firstName = author.split(" ")[0];
-                            lastName = author.split(" ")[author.split(" ").length-1];
-
-                            System.out.println("\nEnter author's middle name or leave blank if none, or type 0 to exit: ");
-                            String middleName = getUserInput(new String[]{}, 0);
-                            if (author.equals("0")) {
-                                break;
-                            }
-                            firstName += " " + middleName;
-
-                            System.out.println("\nEnter publication date (YYYYMMDD) or type 0 to exit: ");
-                            // publicationDate = Integer.parseInt(getUserInput(new String[]{}, 0));
-                            publicationDate = getUserInput(new int[]{});
-                            if (publicationDate == 0) {    
-                                break;
-                            }
-
-                            System.out.println("\nEnter # of pages or type 0 to exit: ");
-                            pageCount = getUserInput(new int[]{});
-                            if (pageCount == 0) {
-                                break;
-                            }
-
-                            int typeInt = 0;
-                            while (true) {
-                                System.out.println("""
-                                Enter book type:
-                                    1: Novel
-                                    2: Childrens' Book 
-                                    3: Textbook
-                                    0: Exit
-                                """);
-                                typeInt = getUserInput(new int[]{0, 1, 2, 3});
-                                if (typeInt == 0 || (typeInt >= 0 && typeInt <= 3)) {
-                                    break;
-                                }
-                                else {
-                                    System.out.println("Invalid book type! Please try again.");
-                                    continue;
-                                }                      
-                            }
-                            
-                            if (typeInt == 1) {
-                                Novel.Genre genre = Novel.Genre.OTHER;
-                                boolean fictional;
-                                int genreInt = 0;
-                                while (true) {
-                                    System.out.println("""
-                                    Enter book genre: 
-                                    1: SCIENCE FICTION
-                                    2: ROMANCE  
-                                    3: CLASSIC
-                                    4: HISTORICAL FICTION
-                                    5: BIOGRAPHY
-                                    6: MYSTERY
-                                    7: HORROR
-                                    8: THRILLER
-                                    9: FANTASY
-                                    10: OTHER
-                                    0: Exit
-                                    """);
-                                    genreInt = getUserInput(new int[]{0,1,2,3,4,5,6,7,8,9,10});
-                                    
-                                    if (genreInt == 0) {
-                                        break;
-                                    }
-                                    else if (genreInt <= 10 && genreInt >= 0) {
-                                        genre = Novel.Genre.values()[genreInt - 1];
-                                        break;
-                                    }
-                                    else {
-                                        System.out.println("Invalid book genre! Please try again.");
-                                        continue;
-                                    }
-                                }
-                                if (genreInt == 0) {
-                                    break;
-                                }
- 
-                                while (true) {
-                                    System.out.println("""
-                                    Is the book fictional? 
-                                        1: True
-                                        2: False
-                                        0: Exit
-                                    """);
-                                    try {
-                                        int fictionalInt = getUserInput(new int[]{1, 2});
-                                        if (fictionalInt == 1) {
-                                            fictional = true;
-                                            break;
-                                        }
-                                        else if (fictionalInt == 2) {
-                                            fictional = false;
-                                            break;
-                                        }
-                                    }
-                                    catch (Exception e) {
-                                        System.out.println("Invalid input! Please try again.");
-                                    }
-                                }
-                                library.addBooks(new Novel(title, pageCount, condition, firstName, lastName, publicationDate, isbn, genre, fictional));
-                            }
-                            else if (typeInt == 2) {
-                                int lexile;
-                                System.out.println("\nEnter lexile score: ");
-
-                                while (true) {
-                                    try {
-                                        lexile = getUserInput(new int[]{});
-                                        break;
-                                    }
-                                    catch (Exception h) {
-                                        System.out.println("Invalid input! Please try again.");
-                                    }
-                                }
-                                if (lexile == 0) {
-                                    break;
-                                }
-                                Book newBook = new ChildrensBook(title, pageCount, condition, firstName, lastName, publicationDate, isbn, lexile);
-                                library.addBooks(newBook);
-                                System.out.println("New Book Added!");
-                                break;
-                            }
-                            else if (typeInt == 3) {
-                                Textbook.Subject subject = Textbook.Subject.OTHER;
-                                String course;
-                                int subjectInt = 0;
-                                System.out.println(""" 
-                                    Enter subject: 
-                                    1: MATH
-                                    2: SCIENCE
-                                    3: ENGLISH
-                                    4: HISTORY 
-                                    5: ART
-                                    6: MUSIC
-                                    7: COMPUTER SCIENCE
-                                    8: FOREIGN LANGUAGE
-                                    9: ECONOMICS
-                                    10: PSYCHOLOGY
-                                    11: PHILOSOPHY 
-                                    12: SOCIOLOGY
-                                    13: POLITICAL SCIENCE
-                                    14: RELIGION
-                                    15: GEOGRAPHY
-                                    16: LITERATURE
-                                    17: ENGINEERING
-                                    18: MEDICINE
-                                    19: LAW
-                                    20: BUSINESS
-                                    21: OTHER
-                                    0: Exit
-                                """);
-                                int[] range = IntStream.range(0, 22).toArray();
-                                subjectInt = getUserInput(range);
-                                if (subjectInt == 0) {
-                                    break;
-                                }
-                                subject = Textbook.Subject.values()[subjectInt - 1];
-
-                                System.out.println("\nEnter course name or type 0 to exit: ");
-                                while (true) {
-                                    try {
-                                        course = getUserInput(new String[]{}, 1);
-                                        if (course.equals("0")){
-                                            break;
-                                        }
-                                    }
-                                    catch (Exception e) {
-                                        System.out.println("Invalid input! Please try again.");
-                                    }
-                                    
-                                }
-                                if (course.equals("0")) {
-                                    break;
-                                }
-                                Book newBook = new Textbook(title, pageCount, condition, firstName, lastName, publicationDate, isbn, subject, course);
-                                library.addBooks(newBook);
-                                System.out.println("New Book Added!");
-                                break;
-                            }
-                        }
-                    }
-                } 
+                    openAddBookPrompt(library);
+                    break;
                 case 5:
                     openCommandPrompt(library);
+                    break;
                 case 0:
                     System.out.println("Admin logged out.");
                     flag = false;
@@ -659,7 +419,243 @@ public class Library{
         }   
     }
     }
+    public static void openAddBookPrompt(LibraryManagement library){
+        while (true) {
+            int isbn = 0;
+            System.out.println("\nEnter ISBN or 0 to exit: ");
+            isbn = getUserInput(new int[]{});
+            if (isbn == 0) {
+                break;
+            }
 
+            String title;
+            int pageCount = 0;
+            String firstName = "";
+            String lastName = "";
+            Book.Condition condition = Book.Condition.NEW;
+            int publicationDate;
+            boolean found = false;
+            Book newBook = null;
+            
+            for (long n : library.getBookISBNs()) {
+                if (n == isbn) {
+                    Map info = library.getBookInfo(Integer.toUnsignedLong(isbn));
+                    title = (String) info.get("Title");
+                    System.out.println("Book type found in database as " + title + "! Preloaded data.");
+                    pageCount = Integer.parseInt((String)info.get("Page Count"));
+                    String author = (String) info.get("Author");
+                    firstName = author.split(" ")[0];
+                    lastName = author.split(" ")[author.split(" ").length - 1];
+                    publicationDate = Integer.parseInt((String)info.get("Publication Date"));
+                    lastName = author.split(" ")[0];
+                    publicationDate = Integer.parseInt((String)info.get("Publication Date"));
+                    if (info.containsKey("Type")){
+                        if (info.get("Type").equals("Novel")){
+                            newBook = new Novel(title, pageCount, null, firstName, lastName, publicationDate, isbn, Novel.Genre.valueOf((String)info.get("Genre")), Boolean.parseBoolean((String)info.get("Fictional")));
+                        }
+                        else if (info.get("Type").equals("Textbook")){
+                            newBook = new Textbook(title, pageCount, null, firstName, lastName, publicationDate, isbn, Textbook.Subject.valueOf((String)info.get("Subject")), (String)info.get("Fictional"));
+                        }
+                        else if (info.get("Type").equals("Childrens Book")){
+                            newBook = new ChildrensBook(title, pageCount, null, firstName, lastName, publicationDate, isbn, Integer.parseInt((String)info.get("Lexile")));
+                        }
+                    found = true;
+                    
+                    }
+                }
+            }
+
+            if (!found) {
+                System.out.println("Book not found in database, adding new book type.");
+                while (true) {
+                    System.out.println("\nEnter book title or type 0 to exit: ");
+                    title = getUserInput(new String[]{}, 1);
+                    if (title.equals("0")) {
+                        break;
+                    }
+
+                    
+                    System.out.println("\nEnter author without middle name (i.e. Stephen King) or type 0 to exit: ");
+                    String author = getUserInput(new String[]{}, 1);
+                    if (author.equals("0")) {
+                        break;
+                    }
+                    firstName = author.split(" ")[0];
+                    lastName = author.split(" ")[author.split(" ").length-1];
+
+                    System.out.println("\nEnter author's middle name or leave blank if none, or type 0 to exit: ");
+                    String middleName = getUserInput(new String[]{}, 0);
+                    if (author.equals("0")) {
+                        break;
+                    }
+                    firstName += " " + middleName;
+
+                    System.out.println("\nEnter publication date (YYYYMMDD) or type 0 to exit: ");
+                    // publicationDate = Integer.parseInt(getUserInput(new String[]{}, 0));
+                    publicationDate = getUserInput(new int[]{});
+                    if (publicationDate == 0) {    
+                        break;
+                    }
+
+                    System.out.println("\nEnter # of pages or type 0 to exit: ");
+                    pageCount = getUserInput(new int[]{});
+                    if (pageCount == 0) {
+                        break;
+                    }
+
+                    int typeInt = 0;
+                    System.out.println("""
+                    Enter book type:
+                        1: Novel
+                        2: Childrens' Book 
+                        3: Textbook
+                        0: Exit
+                    """);
+                    typeInt = getUserInput(new int[]{0, 1, 2, 3});
+                    switch (typeInt){
+                        case 0: 
+                            return;
+                        case 1:
+                            Novel.Genre genre = Novel.Genre.OTHER;
+                            boolean fictional;
+                            int genreInt = 0;
+                            while (true) {
+                                System.out.println("""
+                                Enter book genre: 
+                                1: SCIENCE FICTION
+                                2: ROMANCE  
+                                3: CLASSIC
+                                4: HISTORICAL FICTION
+                                5: BIOGRAPHY
+                                6: MYSTERY
+                                7: HORROR
+                                8: THRILLER
+                                9: FANTASY
+                                10: OTHER
+                                0: Exit
+                                """);
+                                genreInt = getUserInput(new int[]{0,1,2,3,4,5,6,7,8,9,10});
+                                
+                                if (genreInt == 0) {
+                                    break;
+                                }
+                                else if (genreInt <= 10 && genreInt >= 0) {
+                                    genre = Novel.Genre.values()[genreInt - 1];
+                                    break;
+                                }
+                                else {
+                                    System.out.println("Invalid book genre! Please try again.");
+                                    continue;
+                                }
+                            }
+                            if (genreInt == 0) {
+                                break;
+                            }
+
+                            while (true) {
+                                System.out.println("""
+                                Is the book fictional? 
+                                    1: True
+                                    2: False
+                                    0: Exit
+                                """);
+                                try {
+                                    int fictionalInt = getUserInput(new int[]{1, 2});
+                                    if (fictionalInt == 1) {
+                                        fictional = true;
+                                        break;
+                                    }
+                                    else if (fictionalInt == 2) {
+                                        fictional = false;
+                                        break;
+                                    }
+                                }
+                                catch (Exception e) {
+                                    System.out.println("Invalid input! Please try again.");
+                                }
+                            }
+                            newBook = new Novel(title, pageCount, condition, firstName, lastName, publicationDate, isbn, genre, fictional);
+                            break;
+                        case 2:
+                            
+                            System.out.println("\nEnter lexile score, or type 0 to exit: ");
+                            int lexile = getUserInput(new int[]{});
+                            if (lexile == 0) {
+                                break;
+                            }
+                            newBook = new ChildrensBook(title, pageCount, condition, firstName, lastName, publicationDate, isbn, lexile);
+                            break;
+                        case 3:
+                            Textbook.Subject subject = Textbook.Subject.OTHER;
+                            String course;
+                            int subjectInt = 0;
+                            System.out.println(""" 
+                                Enter subject: 
+                                1: MATH
+                                2: SCIENCE
+                                3: ENGLISH
+                                4: HISTORY 
+                                5: ART
+                                6: MUSIC
+                                7: COMPUTER SCIENCE
+                                8: FOREIGN LANGUAGE
+                                9: ECONOMICS
+                                10: PSYCHOLOGY
+                                11: PHILOSOPHY 
+                                12: SOCIOLOGY
+                                13: POLITICAL SCIENCE
+                                14: RELIGION
+                                15: GEOGRAPHY
+                                16: LITERATURE
+                                17: ENGINEERING
+                                18: MEDICINE
+                                19: LAW
+                                20: BUSINESS
+                                21: OTHER
+                                0: Exit
+                            """);
+                            int[] range = IntStream.range(0, 22).toArray();
+                            subjectInt = getUserInput(range);
+                            if (subjectInt == 0) {
+                                break;
+                            }
+                            subject = Textbook.Subject.values()[subjectInt - 1];
+
+                            System.out.println("\nEnter course name or type 0 to exit: ");
+                            course = getUserInput(new String[]{}, 1);
+                            if (course.equals("0")){
+                                break;
+                            }
+                            newBook = new Textbook(title, pageCount, condition, firstName, lastName, publicationDate, isbn, subject, course);
+                            break;
+                    }
+                    if (newBook != null){
+                        found = true;
+                        break;
+                    }
+                }
+                
+            }
+            if (found){
+                System.out.println("""
+                Enter book condition:
+                    1: POOR
+                    2: FAIR 
+                    3: GOOD
+                    4: EXCELLENT
+                    5: NEW
+                    0: Exit""");
+                int conditionInt = getUserInput(new int[]{0, 1, 2, 3, 4, 5});
+                if (conditionInt == 0) {
+                    break;
+                }
+                newBook.setCondition(condition.values()[conditionInt]);
+                library.addBooks(newBook);
+                System.out.println("New Book Added!");
+            }
+        }
+    }
+    
     public static void openCommandPrompt(LibraryManagement library){
         System.out.println("Entered command prompt. Type 0 to exit. Type /help for more info.");
         while (true){
