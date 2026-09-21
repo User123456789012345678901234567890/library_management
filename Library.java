@@ -1,3 +1,5 @@
+import java.time.Duration;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.IntStream;
 public class Library{
@@ -64,7 +66,7 @@ public class Library{
         User user = null;
         while (true){
             System.out.println("\nTo log in, please enter your username (min 5 characters). Type 0 to escape. ");
-            String username = getUserInput(new String[]{}, 5);
+            String username = getUserInput(new String[]{}, 1);
             if (username.equals("0")){
                 return;
             }
@@ -281,7 +283,9 @@ public class Library{
             System.out.println("Your borrowed books:"); // its better to do it as one because whether the user wants to see all their borrowed books or wants to return a book they'll be shown thei
             for (int i = 0; i < borrowedBooks.size(); i++){
                 Book book = borrowedBooks.get(i);
-                System.out.println((i+1) + ": " + book.getTitle() + " by " + book.getAuthor() + " - Borrowed " + book.getBorrowedDate());
+                LocalDate now = LocalDate.now();
+                System.out.println((i+1) + ": " + book.getTitle() + " by " + book.getAuthor() + " - Borrowed " + book.getBorrowedDate() + ", " + 
+                (book.getMaxCheckoutDays().toDays() - Duration.between(book.getBorrowedDate().atStartOfDay(), now.atStartOfDay()).toDays()) + " days left.");
             }
             System.out.println("To return a book, please enter the number to the left of the book title. Type 0 to escape.");
             while (true){
@@ -311,7 +315,9 @@ public class Library{
             System.out.println("Your borrowed books:"); // its better to do it as one because whether the user wants to see all their borrowed books or wants to return a book they'll be shown thei
             for (int i = 0; i < borrowedBooks.size(); i++){
                 Book book = borrowedBooks.get(i);
-                System.out.println((i+1) + ": " + book.getTitle() + " by " + book.getAuthor() + " - Borrowed " + book.getBorrowedDate());
+                LocalDate now = LocalDate.now();
+                System.out.println((i+1) + ": " + book.getTitle() + " by " + book.getAuthor() + " - Borrowed " + book.getBorrowedDate() + ", " + 
+                (book.getMaxCheckoutDays().toDays() - Duration.between(book.getBorrowedDate().atStartOfDay(), now.atStartOfDay()).toDays()) + " days left.");
             } 
             System.out.println("To mark a book as lost, please enter the number to the left of the book title. Type 0 to escape."); 
             while (true){ 
