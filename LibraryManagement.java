@@ -112,7 +112,7 @@ public class LibraryManagement {
         }
         return false;
     }
-
+    
     /**
      * Checks out specified books for a user.
      * Precondition: The user and books must be non-null, and the books must exist in the library collection.
@@ -248,6 +248,31 @@ public class LibraryManagement {
      */
     public Map<Integer, User> getUserManagers() {
         return users;
+    }
+
+    /**
+     * Removes a user from the users map.
+     * Precondition: user is not null, and is in map.
+     * Postcondition: User is removed from users map.
+     * @param user The user to remove.
+     */
+    public void removeUser(User user) {
+        if (user != null) {
+            users.remove(user.getUserID());
+        }
+    }
+
+    /**
+     * Removes a book type from the library system and deletes all books under that book type.
+     * Precondition: isbn is not null and is in map.
+     * Postcondition: Book type from library system is removed, all books deleted, all users who checked out the book no longer have it, all waitlist entries for the book is removed.
+     * @param user The isbn of the book type to remove.
+     */
+    public void deregisterBook(long isbn){
+        for (User user : users.values()){
+            returnBooks(user, isbn);
+        }
+        bookManagers.remove(isbn);
     }
 
     public boolean checkUnique(String username) {

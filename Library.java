@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.concurrent.locks.Condition;
 import java.util.stream.IntStream;
 public class Library{
     private static final Scanner SCANNER = new Scanner(System.in); 
@@ -65,7 +64,7 @@ public class Library{
         User user = null;
         while (true){
             System.out.println("\nTo log in, please enter your username (min 5 characters). Type 0 to escape. ");
-            String username = getUserInput(new String[]{}, 0);
+            String username = getUserInput(new String[]{}, 5);
             if (username.equals("0")){
                 return;
             }
@@ -104,8 +103,8 @@ public class Library{
             System.out.println("| To borrow a book, type 1");
             System.out.println("| To see your borrowed books or to return a book, type 2"); //shouldn't you change this into two sepearte thing
             System.out.println("| To mark a book as lost, type 3");
-            System.out.println("| To log out, type 4");
-            int selection = getUserInput(new int[]{1,2,3,4});
+            System.out.println("| To log out, type 0");
+            int selection = getUserInput(new int[]{1,2,3,0});
             switch (selection){
                 case 1:
                     openBorrowBookSession(library, user);
@@ -117,7 +116,7 @@ public class Library{
                     openLostBookSession(library, user);  
                     
                     break;
-                case 4:
+                case 0:
                     System.out.println("Logged out.");
                     return;
                 
@@ -134,7 +133,7 @@ public class Library{
             System.out.println("\nPreparing to borrow book...");
             System.out.println("| To search for a book by name, type 1");
             System.out.println("| To browse through our list of books, type 2");
-            System.out.println("| To exit out of borrowing mode, type 3");
+            System.out.println("| To exit out of borrowing mode, type 0");
             int selection = getUserInput(new int[]{1,2, 3});
             switch (selection){
                 case 1: // search 
@@ -143,7 +142,7 @@ public class Library{
                 case 2: // browse
                     openBrowseSession(library, user);
                     break;
-                case 3:
+                case 0:
                     System.out.println("\nExiting out of borrowing books...");
                     return;
                 default:
@@ -154,7 +153,7 @@ public class Library{
     }
 
     private static void openSearchSession(LibraryManagement library, User user){
-        System.out.println("\nOpening Book Searcher...");
+        System.out.println("\nOpening Book Searcher...\nType the name of the book you want to view.");
         String bookName = getUserInput(new String[]{}, 0).trim();
         long[] bookISBNS = library.getBookISBNs();
         long foundBookISBN = -1;
@@ -211,8 +210,9 @@ public class Library{
             System.out.println("\nPage " + (page + 1) + "/" + (maxPage + 1));
             for (int i = page * 10; i < (int)Math.min(page * 10 + 10, keys.length); i++){
                 long ISBN = keys[i].longValue();
+                BookManagement manager = catalog.get(ISBN);
                 Map<?, ?> info = catalog.get(ISBN).getBookInfo(); //what does this do doesn't display any2
-                System.out.println((i + 1) + ". " + info.get("Title") + " (ISBN: " + ISBN + ")"); // i added this
+                System.out.println((i + 1) + ". " + info.get("Title") + " (ISBN: " + ISBN + ") - " + manager.getAvailableBooks().size() + "/" + manager.getBookCount() + " available"); // i added this
             }
             System.out.println("| To select a book, type its ISBN.");
             if (page != maxPage){
@@ -351,8 +351,8 @@ public class Library{
         }
     }
 
-    private static void OpenAdminSession(LibraryManagement library){
-        System.out.println("Please enter the admin password");
+    private static void openAdminSession(LibraryManagement library){
+        System.out.println("Please enter the admin password: ");
         String password = getUserInput(new String[]{}, 5);
         if (!password.equals(ADMIN_PASSWORD)){
             System.out.println("Incorrect password. Returning to main menu.");
@@ -365,8 +365,9 @@ public class Library{
             System.out.println("\n| To view the full catalog, type 1");
             System.out.println(("| To view all waitlists, type 2"));
             System.out.println(("| To view all users, type 3"));
-            System.out.println(("| To add a book to the system, type 4"));
-            System.out.println(("| To log out, type 5"));
+            System.out.println(("| To add books to the system, type 4"));
+            System.out.println("| To enter command prompt, type 5.");
+            System.out.println(("| To log out, type 0"));
             switch (getUserInput(new int[]{1, 2, 3, 4, 5})){
                 case 1:
                     for (BookManagement manager : library.getBookManagers().values()){
@@ -374,6 +375,9 @@ public class Library{
                         String title = (info == null) ? "(no copies)" : String.valueOf(info.get("Title"));
                         System.out.println("| ISBN " + manager.getISBN() + " - " + title + " (" + manager.getAvailableBooks().size()+ " of " + manager.getBookCount() + " available)");
                     }
+                    System.out.println("""
+                            Use /book view <isbn> to view a user's information.
+                            Use /book remove <isbn> to remove a user from the database.""");
                     break;
                 case 2:
                     System.out.println("Waitlists:"); 
@@ -387,10 +391,15 @@ public class Library{
                     for (User user : library.getUserManagers().values()){
                         System.out.println(user.getUserID() + " (" + user.getUsername() + ")");
                     }
+                    System.out.println("""
+                            Use /user view <username> to view a user's information.
+                            Use /user remove <username> to remove a user from the database.
+                            """);
                     break;
                 case 4:
                     // add book to system (prompt admin to fill out all book details sequentially)
                     // boolean flag = true;
+                    System.out.println("Adding books to the system.");
                     while (true) {
                         int isbn = 0;
                         System.out.println("\nEnter ISBN or 0 to exit: ");
@@ -408,71 +417,68 @@ public class Library{
                         boolean found = false;
                         
                         for (long n : library.getBookISBNs()) {
-                            if (library.getBookManagers().get(Integer.toUnsignedLong(isbn)) != null) {
+                            if (n == isbn) {
                                 Map info = library.getBookInfo(Integer.toUnsignedLong(isbn));
                                 title = (String) info.get("Title");
-                                pageCount = (int) info.get("Page Count");
+                                System.out.println("Book type found in database as " + title + "! Preloaded data.");
+                                pageCount = Integer.parseInt((String)info.get("Page Count"));
                                 String author = (String) info.get("Author");
                                 firstName = author.split(" ")[0];
                                 lastName = author.split(" ")[author.split(" ").length - 1];
                                 publicationDate = (int) info.get("Publication Date");
+                                lastName = author.split(" ")[0];
+                                publicationDate = Integer.parseInt((String)info.get("Publication Date"));
                                 found = true;
                             }
                         }
+                        System.out.println("""
+                            Enter book condition:
+                                1: POOR
+                                2: FAIR 
+                                3: GOOD
+                                4: EXCELLENT
+                                5: NEW
+                                0: Exit""");
+                        int conditionInt = getUserInput(new int[]{0, 1, 2, 3, 4, 5});
+                        if (conditionInt == 0) {
+                            break;
+                        }
+
                         if (!found) {
+                            System.out.println("Book not found in database, adding new book type.");
                             while (true) {
-                            System.out.println("\nEnter book title: ");
-                            title = getUserInput(new String[]{}, 0);
+                            System.out.println("\nEnter book title or type 0 to exit: ");
+                            title = getUserInput(new String[]{}, 1);
                             if (title.equals("0")) {
                                 continue;
                             }
 
                             
-                            System.out.println("\nEnter author (i.e. Stephen King): ");
-                            String author = getUserInput(new String[]{}, 0);
+                            System.out.println("\nEnter author without middle name (i.e. Stephen King) or type 0 to exit: ");
+                            String author = getUserInput(new String[]{}, 1);
                             if (author.equals("0")) {
                                 break;
                             }
                             firstName = author.split(" ")[0];
                             lastName = author.split(" ")[author.split(" ").length-1];
 
-                            System.out.println("\nEnter publication date: ");
-                            publicationDate = Integer.parseInt(getUserInput(new String[]{}, 0));
+                            System.out.println("\nEnter author's middle name or leave blank if none, or type 0 to exit: ");
+                            String middleName = getUserInput(new String[]{}, 0);
+                            if (author.equals("0")) {
+                                break;
+                            }
+                            firstName += " " + middleName;
+
+                            System.out.println("\nEnter publication date (YYYYMMDD) or type 0 to exit: ");
+                            // publicationDate = Integer.parseInt(getUserInput(new String[]{}, 0));
+                            publicationDate = getUserInput(new int[]{});
                             if (publicationDate == 0) {    
                                 break;
                             }
 
-                            System.out.println("\nEnter # of pages: ");
-                            pageCount = Integer.parseInt(getUserInput(new String[]{}, 0));
+                            System.out.println("\nEnter # of pages or type 0 to exit: ");
+                            pageCount = getUserInput(new int[]{});
                             if (pageCount == 0) {
-                                    break;
-                            }
-
-                            System.out.println("""
-                                Enter book condition:
-                                1: POOR
-                                2: FAIR 
-                                3: GOOD
-                                4: EXCELLENT
-                                5: NEW
-                                0: EXIT
-                            """);
-                            int conditionInt = 0;
-                            while (true) {
-                                conditionInt = getUserInput(new int[]{0, 1, 2, 3, 4, 5});
-                                if (conditionInt == 0) {
-                                    break;
-                                }
-                                else if (conditionInt >= 1 && conditionInt <= 5) {
-                                    condition = Book.Condition.values()[conditionInt - 1];
-                                    break;
-                                }
-                                else {
-                                    System.out.println("Invalid condition! Please try again.");
-                                    continue;
-                                }
-                            }
-                            if (conditionInt == 0) {
                                 break;
                             }
 
@@ -480,10 +486,10 @@ public class Library{
                             while (true) {
                                 System.out.println("""
                                 Enter book type:
-                                1: Novel
-                                2: Childrens' Book 
-                                3: Textbook
-                                0: Exit
+                                    1: Novel
+                                    2: Childrens' Book 
+                                    3: Textbook
+                                    0: Exit
                                 """);
                                 typeInt = getUserInput(new int[]{0, 1, 2, 3});
                                 if (typeInt == 0 || (typeInt >= 0 && typeInt <= 3)) {
@@ -540,8 +546,7 @@ public class Library{
                                         0: Exit
                                     """);
                                     try {
-                                        int fictionalInt;
-                                        fictionalInt = Integer.parseInt(getUserInput(new String[]{}, 0));
+                                        int fictionalInt = getUserInput(new int[]{1, 2});
                                         if (fictionalInt == 1) {
                                             fictional = true;
                                             break;
@@ -563,7 +568,7 @@ public class Library{
 
                                 while (true) {
                                     try {
-                                        lexile = Integer.parseInt(getUserInput(new String[]{}, 0));
+                                        lexile = getUserInput(new int[]{});
                                         break;
                                     }
                                     catch (Exception h) {
@@ -573,14 +578,16 @@ public class Library{
                                 if (lexile == 0) {
                                     break;
                                 }
-                                library.addBooks(new ChildrensBook(title, pageCount, condition, firstName, lastName, publicationDate, isbn, lexile));
+                                Book newBook = new ChildrensBook(title, pageCount, condition, firstName, lastName, publicationDate, isbn, lexile);
+                                library.addBooks(newBook);
+                                System.out.println("New Book Added!");
+                                break;
                             }
                             else if (typeInt == 3) {
                                 Textbook.Subject subject = Textbook.Subject.OTHER;
                                 String course;
                                 int subjectInt = 0;
-                                while (true) {
-                                    System.out.println(""" 
+                                System.out.println(""" 
                                     Enter subject: 
                                     1: MATH
                                     2: SCIENCE
@@ -604,28 +611,21 @@ public class Library{
                                     20: BUSINESS
                                     21: OTHER
                                     0: Exit
-                                    """);
-                                    int[] range = IntStream.range(0, 22).toArray();
-                                    subjectInt = getUserInput(range);
-                                    if (subjectInt == 0) {
-                                        break;
-                                    }
-                                    else if (subjectInt >= 1 && subjectInt <= 21) {
-                                        subject = Textbook.Subject.values()[subjectInt - 1];
-                                        break;
-                                    }
-                                    else
-                                        continue;
-                                }
+                                """);
+                                int[] range = IntStream.range(0, 22).toArray();
+                                subjectInt = getUserInput(range);
                                 if (subjectInt == 0) {
                                     break;
                                 }
+                                subject = Textbook.Subject.values()[subjectInt - 1];
 
-                                System.out.println("\nEnter course: ");
+                                System.out.println("\nEnter course name or type 0 to exit: ");
                                 while (true) {
                                     try {
-                                        course = getUserInput(new String[]{}, 0);
-                                        break;
+                                        course = getUserInput(new String[]{}, 1);
+                                        if (course.equals("0")){
+                                            break;
+                                        }
                                     }
                                     catch (Exception e) {
                                         System.out.println("Invalid input! Please try again.");
@@ -635,18 +635,84 @@ public class Library{
                                 if (course.equals("0")) {
                                     break;
                                 }
-                                library.addBooks(new Textbook(title, pageCount, condition, firstName, lastName, publicationDate, isbn, subject, course));
+                                Book newBook = new Textbook(title, pageCount, condition, firstName, lastName, publicationDate, isbn, subject, course);
+                                library.addBooks(newBook);
+                                System.out.println("New Book Added!");
+                                break;
                             }
                         }
                     }
                 } 
                 case 5:
+                    openCommandPrompt(library);
+                case 0:
                     System.out.println("Admin logged out.");
                     flag = false;
-                    break;
+                    return;
         }
         }   
     }
+    }
+
+    public static void openCommandPrompt(LibraryManagement library){
+        System.out.println("Entered command prompt. Type 0 to exit.");
+        while (true){
+            String userInput = getUserInput(new String[]{}, 0);
+            String[] parameters = userInput.split(" ");
+            String command;
+            if (parameters.length == 0){ continue; }
+            else if (parameters[0].equals("0")) {break;}
+            switch (parameters[0]){
+                case "/user":
+                    if (parameters.length != 3){ System.out.println("Usage:\n/user view <username>\n/user remove <username>");break;}
+                    command = parameters[1];
+                    String username = parameters[2];
+                    User foundUser = null;
+                    for (User user : library.getUserManagers().values()){
+                        if (user.getUsername().equals(username)){
+                            foundUser = user;
+                            break;
+                        }
+                    }
+                    if (foundUser == null){
+                        System.out.println("Could not find user with username <" + username + ">.");
+                        break;
+                    }
+                    if (command.equals("view")){
+                        System.out.println(foundUser);
+                    }
+                    else if (command.equals("remove")){
+                        library.removeUser(foundUser);
+                    }
+                    break;
+                case "/book":
+                    if (parameters.length != 3){ System.out.println("Usage:\n/book view <isbn>\n/book remove <isbn>");break;}
+                    command = parameters[1];
+                    long isbn = -1;
+                    try{
+                        isbn = Long.parseLong(parameters[2]);
+                    }
+                    catch(Exception e){
+                        System.out.println("Invalid isbn.");
+                        break;
+                    }
+                    for (long l : library.getBookISBNs()){
+                        if (l == isbn){
+                            if (command.equals("view")){
+                                System.out.println(library.getBookInfo(isbn));
+                                break;
+                            }
+                            else if (command.equals("remove")){
+                                library.deregisterBook(isbn);
+                                System.out.println("Removed book " + isbn);
+                                break;
+                            }
+                        }
+                    }
+                    System.out.println("Book of isbn " + isbn + " was not found.");
+
+            }
+        }
     }
     /**
      * 
@@ -739,8 +805,8 @@ public class Library{
             System.out.println("| To log in, type 1");
             System.out.println("| To create a new account, type 2");
             System.out.println("| To log in as admin, type 3");
-            System.out.println("| To leave the system, type 4");
-            int i = getUserInput(new int[]{1,2,3,4});
+            System.out.println("| To leave the system, type 0");
+            int i = getUserInput(new int[]{1,2,3,0});
             switch (i){
                 case 1:
                     // Log in
@@ -752,9 +818,9 @@ public class Library{
                     continue;
                 case 3:
                     // Log in as admin
-                    OpenAdminSession(library);
+                    openAdminSession(library);
                     continue;
-                case 4:
+                case 0:
                     System.out.println("Thank you for using " + libraryName + " library management system. Goodbye!");
                     return;
                 default:

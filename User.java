@@ -192,4 +192,18 @@ public class User {
     public boolean authenticate(String username, String password) {
         return this.username.equals(username) && this.password.equals(password);
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", username='" + username + '\'' +
+                ", userID=" + userID +
+                ", latestID=" + latestID +
+                ", borrowedBooks=" + borrowedBooks +
+                ", penalty=" + penalty +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }
