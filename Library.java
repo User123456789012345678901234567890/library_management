@@ -425,7 +425,7 @@ public class Library{
                                 String author = (String) info.get("Author");
                                 firstName = author.split(" ")[0];
                                 lastName = author.split(" ")[author.split(" ").length - 1];
-                                publicationDate = (int) info.get("Publication Date");
+                                publicationDate = Integer.parseInt((String)info.get("Publication Date"));
                                 lastName = author.split(" ")[0];
                                 publicationDate = Integer.parseInt((String)info.get("Publication Date"));
                                 found = true;
