@@ -655,7 +655,7 @@ public class Library{
     }
 
     public static void openCommandPrompt(LibraryManagement library){
-        System.out.println("Entered command prompt. Type 0 to exit.");
+        System.out.println("Entered command prompt. Type 0 to exit. Type /help for more info.");
         while (true){
             String userInput = getUserInput(new String[]{}, 0);
             String[] parameters = userInput.split(" ");
@@ -710,6 +710,12 @@ public class Library{
                         }
                     }
                     System.out.println("Book of isbn " + isbn + " was not found.");
+                case "/help":
+                    System.out.println("""
+                    Commands (Type them to view more info):
+                        /user
+                        /book
+                    """);
 
             }
         }
