@@ -434,7 +434,7 @@ public class Library{
                                 break;
                             }
                             firstName = author.split(" ")[0];
-                            lastName = author.split(" ")[-1];
+                            lastName = author.split(" ")[author.split(" ").length-1];
 
                             System.out.println("\nEnter publication date: ");
                             publicationDate = Integer.parseInt(getUserInput(new String[]{}, 0));
