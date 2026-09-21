@@ -414,7 +414,7 @@ public class Library{
                                 pageCount = (int) info.get("Page Count");
                                 String author = (String) info.get("Author");
                                 firstName = author.split(" ")[0];
-                                lastName = author.split(" ")[0];
+                                lastName = author.split(" ")[author.split(" ").length - 1];
                                 publicationDate = (int) info.get("Publication Date");
                                 found = true;
                             }
