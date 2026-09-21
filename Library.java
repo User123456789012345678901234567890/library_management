@@ -249,8 +249,11 @@ public class Library{
                             System.out.println("Check out book? 1 - Yes, 2 - No");
                             int checkOutSelection = getUserInput(new int[]{1,2});
                             if (checkOutSelection == 1){
-                                library.borrowBooks(user, ISBN);
-                                System.out.println("Checked out " + bookInfo.get("Title") + ".");
+                                if (library.borrowBooks(user, ISBN) == LibraryManagement.BookBorrowResult.BORROWED)
+                                    System.out.println("Checked out " + bookInfo.get("Title") + ".");
+                                else    
+                                    System.out.println("Book is currently unavailable. User added to book waitlist.");
+                                
                             }
                         }
                         else{

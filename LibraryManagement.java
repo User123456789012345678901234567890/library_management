@@ -159,6 +159,7 @@ public class LibraryManagement {
                 return BookBorrowResult.BORROWED;
             }
             else{
+                bookManagers.get(isbn).checkoutBook(user, bookManagers.get(isbn).getBorrowedBooks().get(0));
                 return BookBorrowResult.NO_BOOK_FOUND;
             }
             

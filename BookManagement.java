@@ -54,6 +54,10 @@ public class BookManagement {
         return available;
     }
 
+    public ArrayList<Book> getBorrowedBooks() {
+        return borrowed;
+    }
+
     /**
      * Adds books to the available catalog.
      * Precondition: The book must be valid and non-empty.
@@ -75,7 +79,7 @@ public class BookManagement {
      */
     public boolean checkoutBook(User user, Book book) {
         // Store book under User
-        if (!available.isEmpty() && !borrowed.contains(book)) {
+        if (available.contains(book)) {
             user.borrowBook(book);
             borrowed.add(book);
             available.remove(book);
@@ -87,7 +91,7 @@ public class BookManagement {
             available.remove(0); 
             return true;
         }
-        else if (user.hasBook(book) != null) { // user renews a book
+        else if (user.hasBook(book) != null && waitlist.isEmpty()) { // user renews a book
             book.setBorrowedDate();
             return true;
         }
