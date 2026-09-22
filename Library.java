@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.stream.IntStream;
 public class Library{
     private static final Scanner SCANNER = new Scanner(System.in); 
-    private static final int PAGE_SIZE = 10;
     private static final String ADMIN_PASSWORD = "libadmin";
     public static void main(String[] args){
         Library.OpenSession("Milpitas");
@@ -16,6 +15,10 @@ public class Library{
             String str;
             try{
                 str = SCANNER.nextLine();
+                if (str.length() < minLength){
+                    System.out.println("Your input needs to be at least " + minLength + " characters. Please try again.");
+                    continue;
+                } 
                 // scanner.close();
                 if (allowedInputs.length != 0){
                     for (String allowedInput : allowedInputs){
@@ -23,12 +26,12 @@ public class Library{
                             return str;
                         }
                     }
-                }
-                if (str.length() < minLength){
-                    System.out.println("Your input needs to be at least " + minLength + " characters. Please try again.");
+                    System.out.println("Your input is not allowed. Please try again.");
                     continue;
-                } 
-                return str;
+                }
+                else{
+                    return str;
+                }
             }
             catch(Exception e){
                 System.out.println("Your input wasn't a valid command. Please try again.");
@@ -37,16 +40,6 @@ public class Library{
     }
     public static int getUserInput(int[] allowedInputs){
         while (true){
-            if (allowedInputs.length == 0){
-                String userInput = getUserInput(new String[]{}, 1);
-                try{
-                    return Integer.parseInt(userInput);
-                }
-                catch(Exception e){
-                    System.out.println("Your input wasn't a valid command. Please try again.");
-                    continue;
-                }
-            }
             String[] allowedInputsStr = new String[allowedInputs.length];
             for (int i = 0; i < allowedInputs.length; i++){
                 allowedInputsStr[i] = Integer.toString(allowedInputs[i]);
@@ -61,6 +54,9 @@ public class Library{
             }
         }
 
+    }
+    public static void clearScreen() {  
+        
     }
     private static void openLoginSession(LibraryManagement library){
         User user = null;
@@ -94,18 +90,19 @@ public class Library{
                 break;
             }
         }
-        System.out.println("\nSigned in as " + user.getName() + " (ID: " + user.getUserID() + ")."); //we have an id somewhere so add it in here or we can leave it out if u want
-        ArrayList<Book> overdueBooks = user.getOverdue();
-        user.setPenalty(!overdueBooks.isEmpty()); 
-        if (!overdueBooks.isEmpty()){
-            System.out.println("WARNING: You have " + overdueBooks.size() + " overdue books:");
-            for (Book overdueBook : overdueBooks){
-                System.out.println("  " + overdueBook.getTitle() + " - Borrowed on " + overdueBook.getBorrowedDate());
-            }
-            System.out.println("If you do not return overdue books, you will be barred from borrowing books until they are returned.");
-
-        }
         while (true){
+            System.out.println("\nSigned in as " + user.getName() + " (Username: " + user.getUsername() + ")."); //we have an id somewhere so add it in here or we can leave it out if u want
+            ArrayList<Book> overdueBooks = user.getOverdue();
+            user.setPenalty(!overdueBooks.isEmpty()); 
+            if (!overdueBooks.isEmpty()){
+                System.out.println("WARNING: You have " + overdueBooks.size() + " overdue books:");
+                for (Book overdueBook : overdueBooks){
+                    System.out.println("  " + overdueBook.getTitle() + " - Borrowed on " + overdueBook.getBorrowedDate());
+                }
+                System.out.println("If you do not return overdue books, you will be barred from borrowing books until they are returned.");
+
+            }
+
             System.out.println("| To borrow a book, type 1");
             System.out.println("| To see your borrowed books or to return a book, type 2"); //shouldn't you change this into two sepearte thing
             System.out.println("| To mark a book as lost, type 3");
@@ -120,7 +117,6 @@ public class Library{
                     break;
                 case 3:
                     openLostBookSession(library, user);  
-                    
                     break;
                 case 0:
                     System.out.println("Logged out.");
@@ -140,7 +136,7 @@ public class Library{
             System.out.println("| To search for a book by name, type 1");
             System.out.println("| To browse through our list of books, type 2");
             System.out.println("| To exit out of borrowing mode, type 0");
-            int selection = getUserInput(new int[]{1,2, 3});
+            int selection = getUserInput(new int[]{1,2, 3, 0});
             switch (selection){
                 case 1: // search 
                     openSearchSession(library, user);
@@ -183,9 +179,10 @@ public class Library{
         else{
             System.out.println("\nBook Found!");
             for (Map.Entry<?, ?> entry : info.entrySet()) {
-                System.out.println(entry.getKey() + ": " + entry.getValue());
+                System.out.println("| " + entry.getKey() + ": " + entry.getValue());
             }
-            System.out.println("\nCheck out book? 1 - Yes, 2 - No");
+            System.out.println("Number of available copies: " + library.getBookManagers().get(foundBookISBN).getAvailableBooks().size());
+            System.out.println("Check out book? Type 1 for yes, 2 for no.");
             int checkOutSelection = getUserInput(new int[]{1,2});
             if (checkOutSelection == 1){
                 LibraryManagement.BookBorrowResult res = library.borrowBooks(user, foundBookISBN);
@@ -213,13 +210,14 @@ public class Library{
         int page = 0;
         int maxPage = (int)Math.ceil(keys.length / 10); 
         while (true){
-            System.out.println("\nPage " + (page + 1) + "/" + (maxPage + 1));
+            System.out.println("Page " + (page + 1) + "/" + (maxPage + 1));
             for (int i = page * 10; i < (int)Math.min(page * 10 + 10, keys.length); i++){
                 long ISBN = keys[i].longValue();
                 BookManagement manager = catalog.get(ISBN);
                 Map<?, ?> info = catalog.get(ISBN).getBookInfo(); //what does this do doesn't display any2
-                System.out.println((i + 1) + ". " + info.get("Title") + " (ISBN: " + ISBN + ") - " + manager.getAvailableBooks().size() + "/" + manager.getBookCount() + " available"); // i added this
+                System.out.println("| " + (i + 1) + ". " + info.get("Title") + " (ISBN: " + ISBN + ") - " + manager.getAvailableBooks().size() + "/" + manager.getBookCount() + " available"); // i added this
             }
+            System.out.println("Page " + (page + 1) + "/" + (maxPage + 1));
             System.out.println("| To select a book, type its ISBN.");
             if (page != maxPage){
                 System.out.println("| To go to the next page, type n.");
@@ -249,14 +247,16 @@ public class Library{
                             System.out.println("\nBook Found!"); // aim to make this also work with the number of the book in the list, not just typing out the entire ISBN
                             Map<?,?> bookInfo = catalog.get(ISBN).getBookInfo();
                             for (Map.Entry<?, ?> entry : bookInfo.entrySet()) {
-                                System.out.println(entry.getKey() + ": " + entry.getValue());
+                                System.out.println("| " + entry.getKey() + ": " + entry.getValue());
                             }
                             System.out.println("Number of available copies: " + catalog.get(ISBN).getAvailableBooks().size());
-                            System.out.println("Check out book? 1 - Yes, 2 - No");
+                            System.out.println("Check out book? Type 1 for yes, 2 for no.");
                             int checkOutSelection = getUserInput(new int[]{1,2});
                             if (checkOutSelection == 1){
-                                if (library.borrowBooks(user, ISBN) == LibraryManagement.BookBorrowResult.BORROWED)
-                                    System.out.println("Checked out " + bookInfo.get("Title") + ".");
+                                if (library.borrowBooks(user, ISBN) == LibraryManagement.BookBorrowResult.BORROWED){
+                                    System.out.println("Checked out " + bookInfo.get("Title") + ". Type any key to continue.");
+                                    String temp = getUserInput(new String[]{}, 0);
+                                }
                                 else    
                                     System.out.println("Book is currently unavailable. User added to book waitlist.");
                                 
@@ -357,7 +357,7 @@ public class Library{
             if (library.checkUnique(username)) {
                 User newUser = new User(firstName, lastName, username);
                 library.addUsers(newUser);
-                System.out.println("Welcome to " + library.getName() + " library, " + newUser.getName() +"! Your user ID is " + newUser.getUserID() + ". Please remember this ID for future reference.");
+                System.out.println("Welcome to " + library.getName() + " library, " + newUser.getName() +"! Your username is " + newUser.getUsername() + ". Please remember this for future reference.");
                 break;
             }       
         System.out.println("Username already taken! Please try again.");
@@ -375,14 +375,16 @@ public class Library{
         while(flag){
             System.out.println("\nWelcome, admin!");
             while (true) {
-            System.out.println("\n| To view the full catalog, type 1");
-            System.out.println(("| To view all waitlists, type 2"));
-            System.out.println(("| To view all users, type 3"));
-            System.out.println(("| To add books to the system, type 4"));
+            System.out.println("\nAdmin controls:");
+            System.out.println("| To view the full book catalog, type 1.");
+            System.out.println(("| To view all waitlists, type 2."));
+            System.out.println(("| To view all users, type 3."));
+            System.out.println(("| To add books to the system, type 4."));
             System.out.println("| To enter command prompt, type 5.");
             System.out.println(("| To log out, type 0"));
-            switch (getUserInput(new int[]{1, 2, 3, 4, 5})){
+            switch (getUserInput(new int[]{1, 2, 3, 4, 5, 0})){
                 case 1:
+                    System.out.println("Full catalog:");
                     for (BookManagement manager : library.getBookManagers().values()){
                         Map<?, ?> info = manager.getBookInfo();
                         String title = (info == null) ? "(no copies)" : String.valueOf(info.get("Title"));
@@ -394,15 +396,20 @@ public class Library{
                     break;
                 case 2:
                     System.out.println("Waitlists:"); 
+                    boolean foundWaitlist = false;
                     for (BookManagement manager : library.getBookManagers().values()){
                         if (!manager.getWaitlist().isEmpty()){
                             System.out.println("| ISBN " + manager.getISBN() + " - " + manager.getWaitlist().size() + " waiting");
+                            foundWaitlist = true;
                         }
+                    }
+                    if (!foundWaitlist){
+                        System.out.println("There are no waitlists for any books.");
                     }
                     break;
                 case 3:
                     for (User user : library.getUserManagers().values()){
-                        System.out.println(user.getUserID() + " (" + user.getUsername() + ")");
+                        System.out.println(user.getUsername() + " (" + user.getName() + ")");
                     }
                     System.out.println("""
                             Use /user view <username> in the terminal to view a user's information.
@@ -499,8 +506,8 @@ public class Library{
                     System.out.println("\nEnter publication date (YYYYMMDD) or type 0 to exit: ");
                     // publicationDate = Integer.parseInt(getUserInput(new String[]{}, 0));
                     publicationDate = getUserInput(new int[]{});
-                    if (publicationDate == 0) {    
-                        break;
+                    if (publicationDate == 0) {
+                        return;
                     }
 
                     System.out.println("\nEnter # of pages or type 0 to exit: ");
@@ -522,11 +529,10 @@ public class Library{
                             return;
                         case 1:
                             Novel.Genre genre = Novel.Genre.OTHER;
-                            boolean fictional;
+                            boolean fictional = false;
                             int genreInt = 0;
-                            while (true) {
-                                System.out.println("""
-                                Enter book genre: 
+                            System.out.println("""
+                            Enter book genre: 
                                 1: SCIENCE FICTION
                                 2: ROMANCE  
                                 3: CLASSIC
@@ -538,45 +544,28 @@ public class Library{
                                 9: FANTASY
                                 10: OTHER
                                 0: Exit""");
-                                genreInt = getUserInput(new int[]{0,1,2,3,4,5,6,7,8,9,10});
-                                
-                                if (genreInt == 0) {
-                                    break;
-                                }
-                                else if (genreInt <= 10 && genreInt >= 0) {
-                                    genre = Novel.Genre.values()[genreInt - 1];
-                                    break;
-                                }
-                                else {
-                                    System.out.println("Invalid book genre! Please try again.");
-                                    continue;
-                                }
-                            }
+                            genreInt = getUserInput(new int[]{0,1,2,3,4,5,6,7,8,9,10});
                             if (genreInt == 0) {
                                 break;
                             }
-
-                            while (true) {
-                                System.out.println("""
-                                Is the book fictional? 
-                                    1: True
-                                    2: False
-                                    0: Exit""");
-                                try {
-                                    int fictionalInt = getUserInput(new int[]{1, 2});
-                                    if (fictionalInt == 1) {
-                                        fictional = true;
-                                        break;
-                                    }
-                                    else if (fictionalInt == 2) {
-                                        fictional = false;
-                                        break;
-                                    }
-                                }
-                                catch (Exception e) {
-                                    System.out.println("Invalid input! Please try again.");
-                                }
+                            genre = Novel.Genre.values()[genreInt - 1];
+                        
+                            System.out.println("""
+                            Is the book fictional? 
+                                1: True
+                                2: False
+                                0: Exit""");
+                            int fictionalInt = getUserInput(new int[]{1, 2, 0});
+                            if (fictionalInt == 1) {
+                                fictional = true;
                             }
+                            else if (fictionalInt == 2) {
+                                fictional = false;
+                            }
+                            else if (fictionalInt == 0) {
+                                break;
+                            }
+                            
                             newBook = new Novel(title, pageCount, condition, firstName, lastName, publicationDate, isbn, genre, fictional);
                             break;
                         case 2:
@@ -594,28 +583,28 @@ public class Library{
                             int subjectInt = 0;
                             System.out.println(""" 
                                 Enter subject: 
-                                1: MATH
-                                2: SCIENCE
-                                3: ENGLISH
-                                4: HISTORY 
-                                5: ART
-                                6: MUSIC
-                                7: COMPUTER SCIENCE
-                                8: FOREIGN LANGUAGE
-                                9: ECONOMICS
-                                10: PSYCHOLOGY
-                                11: PHILOSOPHY 
-                                12: SOCIOLOGY
-                                13: POLITICAL SCIENCE
-                                14: RELIGION
-                                15: GEOGRAPHY
-                                16: LITERATURE
-                                17: ENGINEERING
-                                18: MEDICINE
-                                19: LAW
-                                20: BUSINESS
-                                21: OTHER
-                                0: Exit""");
+                                    1: MATH
+                                    2: SCIENCE
+                                    3: ENGLISH
+                                    4: HISTORY 
+                                    5: ART
+                                    6: MUSIC
+                                    7: COMPUTER SCIENCE
+                                    8: FOREIGN LANGUAGE
+                                    9: ECONOMICS
+                                    10: PSYCHOLOGY
+                                    11: PHILOSOPHY 
+                                    12: SOCIOLOGY
+                                    13: POLITICAL SCIENCE
+                                    14: RELIGION
+                                    15: GEOGRAPHY
+                                    16: LITERATURE
+                                    17: ENGINEERING
+                                    18: MEDICINE
+                                    19: LAW
+                                    20: BUSINESS
+                                    21: OTHER
+                                    0: Exit""");
                             int[] range = IntStream.range(0, 22).toArray();
                             subjectInt = getUserInput(range);
                             if (subjectInt == 0) {
@@ -640,7 +629,7 @@ public class Library{
             }
             if (found){
                 System.out.println("""
-                Enter book condition:
+                \nEnter book condition:
                     1: POOR
                     2: FAIR 
                     3: GOOD
@@ -672,7 +661,14 @@ public class Library{
             else if (parameters[0].equals("0")) {break;}
             switch (parameters[0]){
                 case "/user":
-                    if (parameters.length != 3){ System.out.println("Usage:\n/user view <username>\n/user remove <username>");break;}
+                    if (parameters.length != 3){ 
+                        System.out.println("""
+                            Usage:
+                                /user view <username>
+                                /user remove <username>
+                            """);
+                        break;
+                    }
                     command = parameters[1];
                     String username = parameters[2];
                     User foundUser = null;
@@ -694,7 +690,13 @@ public class Library{
                     }
                     break;
                 case "/book":
-                    if (parameters.length != 3){ System.out.println("Usage:\n/book view <isbn>\n/book remove <isbn>");break;}
+                    if (parameters.length != 3){ System.out.println(
+                        """
+                        Usage:
+                            /book view <isbn>
+                            /book remove <isbn>""");
+                        break;
+                    }
                     command = parameters[1];
                     long isbn = -1;
                     try{
@@ -704,8 +706,10 @@ public class Library{
                         System.out.println("Invalid isbn.");
                         break;
                     }
+                    boolean isbnFound = false;
                     for (long l : library.getBookISBNs()){
                         if (l == isbn){
+                            isbnFound = true;
                             if (command.equals("view")){
                                 System.out.println(library.getBookInfo(isbn));
                                 break;
@@ -717,12 +721,14 @@ public class Library{
                             }
                         }
                     }
-                    System.out.println("Book of isbn " + isbn + " was not found.");
+                    if (!isbnFound) System.out.println("Book of isbn " + isbn + " was not found.");
+                    break;
                 case "/help":
                     System.out.println("""
                     Commands (Type them to view more info):
-                    /user
-                    /book""");
+                        /user
+                        /book""");
+                    break;
 
             }
         }
@@ -814,6 +820,7 @@ public class Library{
             new ChildrensBook("Harold and the Purple Crayon", 64, Book.Condition.FAIR, "Crockett", "Johnson", 1955, 60213801, 5)
         });
         while (true){
+            clearScreen();
             System.out.println("\nWelcome to " + libraryName + " library!");
             System.out.println("| To log in, type 1");
             System.out.println("| To create a new account, type 2");
@@ -836,9 +843,6 @@ public class Library{
                 case 0:
                     System.out.println("Thank you for using " + libraryName + " library management system. Goodbye!");
                     return;
-                default:
-                    System.out.println("Your input wasn't a valid command. Please try again.");
-                    continue;
             }
         }
     }

@@ -6,7 +6,7 @@ import java.util.*;
  */
 public class LibraryManagement {
     private Map<Long, BookManagement> bookManagers;
-    private Map<Integer, User> users;
+    private Map<String, User> users;
     private String libraryName;
     
     /** 
@@ -112,7 +112,7 @@ public class LibraryManagement {
         }
         return false;
     }
-    
+
     /**
      * Checks out specified books for a user.
      * Precondition: The user and books must be non-null, and the books must exist in the library collection.
@@ -177,7 +177,7 @@ public class LibraryManagement {
      */
     public void addUsers(User... newUsers) {
         for (User user : newUsers) {
-            users.put(user.getUserID(), user);
+            users.put(user.getUsername(), user);
         }
     }
 
@@ -247,7 +247,7 @@ public class LibraryManagement {
      * Postcondition: The map containing ints mapped to their User objects is returned.
      * @return A Map of int id to user instances
      */
-    public Map<Integer, User> getUserManagers() {
+    public Map<String, User> getUserManagers() {
         return users;
     }
 
@@ -259,7 +259,7 @@ public class LibraryManagement {
      */
     public void removeUser(User user) {
         if (user != null) {
-            users.remove(user.getUserID());
+            users.remove(user.getUsername());
         }
     }
 

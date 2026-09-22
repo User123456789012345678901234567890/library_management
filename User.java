@@ -7,8 +7,6 @@ import java.util.ArrayList;
 public class User {
     private final String firstName, lastName;
     private final String username; // Must be unique
-    private final int userID;
-    private static int latestID;
     private ArrayList<Book> borrowedBooks;
     private boolean penalty;
     private String password; 
@@ -25,7 +23,6 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
-        userID = ++latestID;
         this.borrowedBooks = new ArrayList<>();
         penalty = false;
         this.password = password;
@@ -43,7 +40,6 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
-        userID = ++latestID;
         this.borrowedBooks = new ArrayList<>();
         penalty = false;
         password = "Pass123!";
@@ -88,16 +84,6 @@ public class User {
      */
     public String getUsername() {
         return username;
-    }
-
-    /**
-     * Returns the user's unique ID.
-     * Precondition: None.
-     * Postcondition: The user's unique ID is returned.
-     * @return the user's unique ID
-     */
-    public int getUserID() {
-        return userID;
     }
 
     /**
@@ -199,8 +185,6 @@ public class User {
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", username='" + username + '\'' +
-                ", userID=" + userID +
-                ", latestID=" + latestID +
                 ", borrowedBooks=" + borrowedBooks +
                 ", penalty=" + penalty +
                 ", password='" + password + '\'' +
