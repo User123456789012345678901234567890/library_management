@@ -54,6 +54,7 @@ public class tester{
         library.borrowBooks(jayden, book6);
         System.out.println("Waiting list for The Great Gatsby: ");
         BookManagement tggBookManager = library.getBookManagers().get(book6.getISBN());
-        System.out.println("1. " + tggBookManager.getWaitlist().peek().getName());
+        if (tggBookManager.getWaitlist().peek() != null)
+            System.out.println("1. " + tggBookManager.getWaitlist().peek().getName());
     } 
 }
