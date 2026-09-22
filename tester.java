@@ -26,7 +26,7 @@ public class tester{
         
         // Test borrowing books
         library.borrowBooks(jerry, book1);
-        // library.borrowBooks(jerry, book6);
+        library.borrowBooks(jerry, book6);
         library.borrowBooks(simon, book1);
         System.out.println(jerry.getBorrowedBooks());
         book1.subtractBorrowedDays(22);
