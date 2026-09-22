@@ -112,7 +112,7 @@ public class LibraryManagement {
         }
         return false;
     }
-    
+
     /**
      * Checks out specified books for a user.
      * Precondition: The user and books must be non-null, and the books must exist in the library collection.
@@ -259,7 +259,7 @@ public class LibraryManagement {
      */
     public void removeUser(User user) {
         if (user != null) {
-            users.remove(user.getUserID());
+            users.remove(user.getUsername());
         }
     }
 
