@@ -518,7 +518,7 @@ public class Library{
 
                     int typeInt = 0;
                     System.out.println("""
-                    Enter book type:
+                    \nEnter book type:
                         1: Novel
                         2: Childrens' Book 
                         3: Textbook
