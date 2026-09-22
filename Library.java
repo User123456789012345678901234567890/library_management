@@ -533,7 +533,7 @@ public class Library{
                             boolean fictional = false;
                             int genreInt = 0;
                             System.out.println("""
-                            Enter book genre: 
+                            \nEnter book genre: 
                                 1: SCIENCE FICTION
                                 2: ROMANCE  
                                 3: CLASSIC
@@ -552,7 +552,7 @@ public class Library{
                             genre = Novel.Genre.values()[genreInt - 1];
                         
                             System.out.println("""
-                            Is the book fictional? 
+                            \nIs the book fictional? 
                                 1: True
                                 2: False
                                 0: Exit""");
@@ -583,7 +583,7 @@ public class Library{
                             String course;
                             int subjectInt = 0;
                             System.out.println(""" 
-                                Enter subject: 
+                                \nEnter subject: 
                                     1: MATH
                                     2: SCIENCE
                                     3: ENGLISH
