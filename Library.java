@@ -425,6 +425,7 @@ public class Library{
                     openCommandPrompt(library);
                     break;
                 case 0:
+                    clearTerminal();
                     System.out.println("Admin logged out.");
                     flag = false;
                     return;
