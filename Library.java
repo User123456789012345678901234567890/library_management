@@ -27,7 +27,6 @@ public class Library{
                         }
                     }
                     System.out.println("Your input is not allowed. Please try again.");
-                    continue;
                 }
                 else{
                     return str;
@@ -349,13 +348,12 @@ public class Library{
         String lastName = getUserInput(new String[]{}, 2);
         while (true) {
             System.out.println("Please enter your username (min 5 characters):  ");
-            String username = "";
-            do{
-                username = getUserInput(new String[]{}, 0);
-            }
-            while (username.length() <= 5);
+            String username = getUserInput(new String[]{}, 5);
             if (library.checkUnique(username)) {
-                User newUser = new User(firstName, lastName, username);
+                System.out.println("Enter a password. If you leave a blank space, the default password Pass123! will be given to you.");
+                String password = getUserInput(new String[]{}, 0);
+                if (password.isBlank()) password = "Pass123!";
+                User newUser = new User(firstName, lastName, username, password);
                 library.addUsers(newUser);
                 System.out.println("Welcome to " + library.getName() + " library, " + newUser.getName() +"! Your username is " + newUser.getUsername() + ". Please remember this for future reference.");
                 break;
