@@ -1,3 +1,4 @@
+import java.io.Console;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.*;
@@ -123,6 +124,7 @@ public class Library{
                     
                     break;
                 case 0:
+                    clearTerminal();
                     System.out.println("Logged out.");
                     return;
                 
@@ -727,6 +729,28 @@ public class Library{
             }
         }
     }
+    private static void clearTerminal(){                                  // ADDED
+        // \033[H  -> move cursor to top-left
+        // \033[2J -> erase the visible screen
+        // \033[3J -> erase the scrollback buffer (xterm extension; VS Code supports it)
+        System.out.print("\033[H\033[2J\033[3J");                         // ADDED
+        System.out.flush();                                               // ADDED
+    }
+    private static String readPassword(String prompt){                    // ADDED
+        Console console = System.console();                                // ADDED
+        if (console != null && console.isTerminal()){                      // ADDED
+            char[] chars = console.readPassword(prompt);                   // ADDED
+            if (chars == null){                                            // ADDED
+                return "";                                                 // ADDED
+            }                                                              // ADDED
+            String password = new String(chars);                           // ADDED
+            Arrays.fill(chars, '\0');   // ADDED - wipe the buffer so it isn't left in memory
+            return password;                                               // ADDED
+        }
+        System.out.print(prompt);                                          // ADDED
+        return SCANNER.nextLine();                                         // ADDED
+    } 
+
     /**
      * 
      * @param libraryName
