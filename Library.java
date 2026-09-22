@@ -55,9 +55,7 @@ public class Library{
         }
 
     }
-    public static void clearScreen() {  
-        
-    }
+
     private static void openLoginSession(LibraryManagement library){
         User user = null;
         while (true){
@@ -91,6 +89,7 @@ public class Library{
             }
         }
         while (true){
+            clearTerminal();
             System.out.println("\nSigned in as " + user.getName() + " (Username: " + user.getUsername() + ")."); //we have an id somewhere so add it in here or we can leave it out if u want
             ArrayList<Book> overdueBooks = user.getOverdue();
             user.setPenalty(!overdueBooks.isEmpty()); 
@@ -205,18 +204,22 @@ public class Library{
         }
     }
     private static void openBrowseSession(LibraryManagement library, User user){ //time to debugg yippeee
+        clearTerminal();
         System.out.println("\nOpening Book Browser...");
         Map<Long, BookManagement> catalog = library.getBookManagers();
         Long[] keys = catalog.keySet().toArray(Long[]::new);
         int page = 0;
-        int maxPage = (int)Math.ceil(keys.length / 10); 
+        int maxPage = (int)Math.ceil(keys.length / 10);
         while (true){
+            clearTerminal();
             System.out.println("Page " + (page + 1) + "/" + (maxPage + 1));
             for (int i = page * 10; i < (int)Math.min(page * 10 + 10, keys.length); i++){
                 long ISBN = keys[i].longValue();
                 BookManagement manager = catalog.get(ISBN);
                 Map<?, ?> info = catalog.get(ISBN).getBookInfo(); //what does this do doesn't display any2
-                System.out.println("| " + (i + 1) + ". " + info.get("Title") + " (ISBN: " + ISBN + ") - " + manager.getAvailableBooks().size() + "/" + manager.getBookCount() + " available"); // i added this
+                if (manager.getBookCount() > 0) {
+                    System.out.println("| " + (i+1) + ". " + info.get("Title") + " (ISBN: " + ISBN + ") - " + manager.getAvailableBooks().size() + "/" + manager.getBookCount() + " available"); // i added this
+                }
             }
             System.out.println("Page " + (page + 1) + "/" + (maxPage + 1));
             System.out.println("| To select a book, type its ISBN.");
@@ -843,7 +846,7 @@ public class Library{
             new ChildrensBook("Harold and the Purple Crayon", 64, Book.Condition.FAIR, "Crockett", "Johnson", 1955, 60213801, 5)
         });
         while (true){
-            clearScreen();
+            // clearTerminal();
             System.out.println("\nWelcome to " + libraryName + " library!");
             System.out.println("| To log in, type 1");
             System.out.println("| To create a new account, type 2");
