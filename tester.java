@@ -7,9 +7,9 @@ public class tester{
         User jerry = new User("Xiaoran", "Xiong", "madpleb");
         User jayden = new User("Jayden", "Ho", "lotusjayden");
         library.addUsers(new User[]{simon, jerry, jayden});
-        System.out.println("User1: " + simon.getName() + ", ID: " + simon.getUserID());
-        System.out.println("User2: " + jerry.getName() + ", ID: " + jerry.getUserID());
-        System.out.println("User3: " + jayden.getName() + ", ID: " + jayden.getUserID());
+        // System.out.println("User1: " + simon.getName() + ", ID: " + simon.getUserID());
+        // System.out.println("User2: " + jerry.getName() + ", ID: " + jerry.getUserID());
+        // System.out.println("User3: " + jayden.getName() + ", ID: " + jayden.getUserID());
         
         // Test adding books
         
